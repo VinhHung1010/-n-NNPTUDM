@@ -149,5 +149,41 @@ class KhoaHoc {
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function layKhoaHocCuaHocVien($hoc_vien_id) {
+        $stmt = $this->db->prepare("
+            SELECT kh.*, dk.ngay_dang_ky AS ngay_dang_ky_khoa, dk.trang_thai AS trang_thai_dk,
+                   nd.ho_ten AS ten_giao_vien, dm.ten_danh_muc,
+                   (SELECT COUNT(*) FROM bai_hoc WHERE id_khoa_hoc = kh.id) AS so_bai_hoc
+            FROM dang_ky_khoa_hoc dk
+            JOIN khoa_hoc kh ON dk.id_khoa_hoc = kh.id
+            LEFT JOIN nguoi_dung nd ON kh.id_nguoi_tao = nd.id
+            LEFT JOIN danh_muc dm ON kh.id_danh_muc = dm.id
+            WHERE dk.id_hoc_vien = ?
+            ORDER BY dk.ngay_dang_ky DESC
+        ");
+        $stmt->bind_param("i", $hoc_vien_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function daDangKy($hoc_vien_id, $khoa_hoc_id) {
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) AS c FROM dang_ky_khoa_hoc
+            WHERE id_hoc_vien = ? AND id_khoa_hoc = ?
+        ");
+        $stmt->bind_param("ii", $hoc_vien_id, $khoa_hoc_id);
+        $stmt->execute();
+        return (int)($stmt->get_result()->fetch_assoc()['c']) > 0;
+    }
+
+    public function dangKy($hoc_vien_id, $khoa_hoc_id) {
+        $stmt = $this->db->prepare("
+            INSERT INTO dang_ky_khoa_hoc (id_hoc_vien, id_khoa_hoc, trang_thai)
+            VALUES (?, ?, 'cho_xu_ly')
+        ");
+        $stmt->bind_param("ii", $hoc_vien_id, $khoa_hoc_id);
+        return $stmt->execute();
+    }
 }
 ?>

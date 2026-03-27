@@ -7,7 +7,7 @@ $auth = new Auth();
 
 // Nếu đã đăng nhập thì chuyển về trang chủ
 if ($auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/index.php');
+    header('Location: ' . HOME_URL);
     exit;
 }
 
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $result = $auth->dangNhap($email, $mat_khau);
         if ($result['success']) {
-            header('Location: ' . SITE_URL . '/index.php');
+            header('Location: ' . HOME_URL);
             exit;
         } else {
             $error = $result['message'];
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include __DIR__ . '/../../views/layouts/header.php';
+include __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="container">
@@ -81,7 +81,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     <div class="text-center">
                         <p class="mb-0">
                             Chưa có tài khoản? 
-                            <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-ky.php" class="text-decoration-none">
+                            <a href="<?php echo BASE_PATH; ?>/tai-khoan/dang-ky.php" class="text-decoration-none">
                                 <strong>Đăng ký ngay</strong>
                             </a>
                         </p>
@@ -101,4 +101,4 @@ include __DIR__ . '/../../views/layouts/header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

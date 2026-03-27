@@ -32,15 +32,15 @@ $bai_hoc_list = $bai_hoc_model->layTheoKhoaHoc($id);
 $tong_bai_hoc = count($bai_hoc_list);
 $tong_thoi_luong = $bai_hoc_model->tinhTongThoiLuong($id);
 
-include __DIR__ . '/../../views/layouts/header.php';
+include __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="container mt-4">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/index.php">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/khoa-hoc/index.php">Khóa học</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo HOME_URL; ?>">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo BASE_PATH; ?>/khoa-hoc/index.php">Khóa học</a></li>
             <li class="breadcrumb-item active"><?php echo $khoa_hoc['ten_khoa_hoc']; ?></li>
         </ol>
     </nav>
@@ -110,7 +110,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     <?php else: ?>
                         <div class="list-group list-group-flush">
                             <?php foreach ($bai_hoc_list as $index => $bh): ?>
-                                <a href="<?php echo SITE_URL; ?>/bai-hoc/chi-tiet.php?id=<?php echo $bh['id']; ?>" 
+                                <a href="<?php echo BASE_PATH; ?>/bai-hoc/chi-tiet.php?id=<?php echo $bh['id']; ?>" 
                                    class="list-group-item list-group-item-action">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
@@ -145,7 +145,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     </div>
                     <div class="card-body">
                         <?php if (!empty($bai_hoc_list)): ?>
-                            <a href="<?php echo SITE_URL; ?>/bai-hoc/chi-tiet.php?id=<?php echo $bai_hoc_list[0]['id']; ?>" 
+                            <a href="<?php echo BASE_PATH; ?>/bai-hoc/chi-tiet.php?id=<?php echo $bai_hoc_list[0]['id']; ?>" 
                                class="btn btn-success w-100 mb-3">
                                 <i class="fas fa-play me-2"></i>Học ngay
                             </a>
@@ -155,11 +155,11 @@ include __DIR__ . '/../../views/layouts/header.php';
                         
                         <?php if ($auth->kiemTraDangNhap() && $_SESSION['nguoi_dung']['vai_tro'] === 'quan_tri'): ?>
                             <hr>
-                            <a href="<?php echo SITE_URL; ?>/khoa-hoc/sua.php?id=<?php echo $id; ?>" 
+                            <a href="<?php echo BASE_PATH; ?>/khoa-hoc/sua.php?id=<?php echo $id; ?>" 
                                class="btn btn-warning w-100 mb-2">
                                 <i class="fas fa-edit me-2"></i>Sửa khóa học
                             </a>
-                            <a href="<?php echo SITE_URL; ?>/khoa-hoc/xoa.php?id=<?php echo $id; ?>" 
+                            <a href="<?php echo BASE_PATH; ?>/khoa-hoc/xoa.php?id=<?php echo $id; ?>" 
                                class="btn btn-danger w-100"
                                onclick="return confirm('Bạn có chắc muốn xóa khóa học này?');">
                                 <i class="fas fa-trash me-2"></i>Xóa khóa học
@@ -174,10 +174,10 @@ include __DIR__ . '/../../views/layouts/header.php';
                     </div>
                     <div class="card-body text-center">
                         <p class="text-muted">Vui lòng đăng nhập để bắt đầu học khóa học này.</p>
-                        <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php" class="btn btn-primary w-100 mb-2">
+                        <a href="<?php echo BASE_PATH; ?>/tai-khoan/dang-nhap.php" class="btn btn-primary w-100 mb-2">
                             <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
                         </a>
-                        <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-ky.php" class="btn btn-outline-secondary w-100">
+                        <a href="<?php echo BASE_PATH; ?>/tai-khoan/dang-ky.php" class="btn btn-outline-secondary w-100">
                             <i class="fas fa-user-plus me-2"></i>Đăng ký
                         </a>
                     </div>
@@ -187,4 +187,4 @@ include __DIR__ . '/../../views/layouts/header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

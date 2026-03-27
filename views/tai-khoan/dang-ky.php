@@ -7,7 +7,7 @@ $auth = new Auth();
 
 // Nếu đã đăng nhập thì chuyển về trang chủ
 if ($auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/index.php');
+    header('Location: ' . HOME_URL);
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include __DIR__ . '/../../views/layouts/header.php';
+include __DIR__ . '/../layouts/header.php';
 ?>
 
 <div class="container">
@@ -56,7 +56,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                         <div class="alert alert-success">
                             <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
                             <br>
-                            <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php" class="alert-link">
+                            <a href="<?php echo BASE_PATH; ?>/tai-khoan/dang-nhap.php" class="alert-link">
                                 Nhấn vào đây để đăng nhập
                             </a>
                         </div>
@@ -106,7 +106,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     <div class="text-center">
                         <p class="mb-0">
                             Đã có tài khoản? 
-                            <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php" class="text-decoration-none">
+                            <a href="<?php echo BASE_PATH; ?>/tai-khoan/dang-nhap.php" class="text-decoration-none">
                                 <strong>Đăng nhập ngay</strong>
                             </a>
                         </p>
@@ -117,4 +117,4 @@ include __DIR__ . '/../../views/layouts/header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../views/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

@@ -120,7 +120,7 @@ $nguoi_dung = $auth->layThongTinNguoiDung();
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="<?php echo SITE_URL; ?>/index.php">
+            <a class="navbar-brand" href="<?php echo HOME_URL; ?>">
                 <i class="fas fa-graduation-cap me-2"></i>E-LEARNING
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -129,18 +129,18 @@ $nguoi_dung = $auth->layThongTinNguoiDung();
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/index.php">
+                        <a class="nav-link" href="<?php echo HOME_URL; ?>">
                             <i class="fas fa-home me-1"></i> Trang chủ
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/khoa-hoc/index.php">
+                        <a class="nav-link" href="<?php echo BASE_PATH; ?>/khoa-hoc/index.php">
                             <i class="fas fa-book me-1"></i> Khóa học
                         </a>
                     </li>
                     <?php if ($nguoi_dung): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo SITE_URL; ?>/tien-do/index.php">
+                            <a class="nav-link" href="<?php echo BASE_PATH; ?>/tien-do/index.php">
                                 <i class="fas fa-chart-line me-1"></i> Tiến độ
                             </a>
                         </li>
@@ -149,26 +149,26 @@ $nguoi_dung = $auth->layThongTinNguoiDung();
                                 <i class="fas fa-user me-1"></i> <?php echo $nguoi_dung['ho_ten']; ?>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/tai-khoan/ho-so.php">
+                                <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/tai-khoan/ho-so.php">
                                     <i class="fas fa-id-card me-2"></i>Hồ sơ
                                 </a></li>
-                                <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/tai-khoan/doi-mat-khau.php">
+                                <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/tai-khoan/doi-mat-khau.php">
                                     <i class="fas fa-key me-2"></i>Đổi mật khẩu
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="<?php echo SITE_URL; ?>/tai-khoan/dang-xuat.php">
+                                <li><a class="dropdown-item text-danger" href="<?php echo BASE_PATH; ?>/tai-khoan/dang-xuat.php">
                                     <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                 </a></li>
                             </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php">
+                            <a class="nav-link" href="<?php echo BASE_PATH; ?>/tai-khoan/dang-nhap.php">
                                 <i class="fas fa-sign-in-alt me-1"></i> Đăng nhập
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo SITE_URL; ?>/tai-khoan/dang-ky.php">
+                            <a class="nav-link" href="<?php echo BASE_PATH; ?>/tai-khoan/dang-ky.php">
                                 <i class="fas fa-user-plus me-1"></i> Đăng ký
                             </a>
                         </li>

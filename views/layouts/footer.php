@@ -10,8 +10,8 @@
                 <div class="col-md-4">
                     <h5>Liên kết</h5>
                     <ul class="list-unstyled">
-                        <li><a href="<?php echo SITE_URL; ?>/index.php" class="text-white">Trang chủ</a></li>
-                        <li><a href="<?php echo SITE_URL; ?>/khoa-hoc/index.php" class="text-white">Khóa học</a></li>
+                        <li><a href="<?php echo HOME_URL; ?>" class="text-white">Trang chủ</a></li>
+                        <li><a href="<?php echo BASE_PATH; ?>/khoa-hoc/index.php" class="text-white">Khóa học</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">

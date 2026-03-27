@@ -6,6 +6,38 @@ class BinhLuan {
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
+        // 若本地库未执行 schema 升级，自动创建评论表，避免页面致命错误
+        $this->damBaoBangTonTai();
+    }
+
+    /**
+     * 确保 binh_luan 表存在（与 database/schema.sql 结构一致）
+     */
+    private function damBaoBangTonTai() {
+        static $daKiemTra = false;
+        if ($daKiemTra) {
+            return;
+        }
+        $daKiemTra = true;
+
+        $res = $this->db->query("SHOW TABLES LIKE 'binh_luan'");
+        if ($res && $res->num_rows > 0) {
+            return;
+        }
+
+        $sql = "CREATE TABLE IF NOT EXISTS binh_luan (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            id_bai_hoc INT NOT NULL,
+            id_nguoi_dung INT NOT NULL,
+            noi_dung TEXT NOT NULL,
+            ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (id_bai_hoc) REFERENCES bai_hoc(id) ON DELETE CASCADE,
+            FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        if (!$this->db->query($sql)) {
+            trigger_error('Không thể tạo bảng binh_luan: ' . $this->db->error, E_USER_WARNING);
+        }
     }
 
     public function layTheoBaiHoc($bai_hoc_id) {

@@ -1,0 +1,29 @@
+# XAMPP settings
+/htdocs/
+
+# Database backup
+*.sql
+!database/schema.sql
+*.bak
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Composer
+/vendor/
+
+# Environment
+.env
+.env.local
+
+# Cache
+/cache/
+/tmp/

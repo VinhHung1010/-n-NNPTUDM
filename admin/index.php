@@ -104,8 +104,22 @@ include __DIR__ . '/partials/layout_start.php';
             </div>
         </a>
     </div>
-    <div class="col-md-4">
-        <div class="card stat-card h-100">
+    <div class="col-sm-6 col-md-4">
+        <a href="<?php echo SITE_URL; ?>/admin/quiz/index.php" class="text-decoration-none">
+            <div class="card stat-card h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-circle-question"></i></div>
+                    <div>
+                        <div class="text-muted small">Quản lý</div>
+                        <div class="fw-semibold text-dark">Quiz</div>
+                        <div class="small text-muted">Thêm / Sửa / Xóa Quiz</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-12">
+        <div class="card stat-card">
             <div class="card-body">
                 <h2 class="h6 mb-2"><i class="fas fa-circle-info me-2 text-primary"></i>Hướng dẫn</h2>
                 <p class="text-muted small mb-0">Sử dụng menu bên trái hoặc các thẻ liên kết để truy cập chức năng quản trị.</p>

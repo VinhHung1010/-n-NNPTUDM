@@ -8,6 +8,17 @@ class BaiHoc {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    public function layTatCa() {
+        $stmt = $this->db->prepare("
+            SELECT bh.*, kh.ten_khoa_hoc
+            FROM bai_hoc bh
+            LEFT JOIN khoa_hoc kh ON bh.id_khoa_hoc = kh.id
+            ORDER BY kh.ten_khoa_hoc, bh.thu_tu
+        ");
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function layTheoKhoaHoc($khoa_hoc_id) {
         $sql = "SELECT * FROM bai_hoc WHERE id_khoa_hoc = ? ORDER BY thu_tu ASC";
         $stmt = $this->db->prepare($sql);

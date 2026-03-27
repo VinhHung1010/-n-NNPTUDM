@@ -8,6 +8,19 @@ class Quiz {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    public function layTatCa() {
+        $stmt = $this->db->prepare("
+            SELECT q.*, bh.tieu_de AS ten_bai_hoc, kh.ten_khoa_hoc,
+                   (SELECT COUNT(*) FROM cau_hoi WHERE id_quiz = q.id) AS so_cau_hoi
+            FROM quiz q
+            LEFT JOIN bai_hoc bh ON q.id_bai_hoc = bh.id
+            LEFT JOIN khoa_hoc kh ON bh.id_khoa_hoc = kh.id
+            ORDER BY q.ngay_tao DESC
+        ");
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function layTheoBaiHoc($bai_hoc_id) {
         $sql = "SELECT * FROM quiz WHERE id_bai_hoc = ? ORDER BY ngay_tao DESC";
         $stmt = $this->db->prepare($sql);
@@ -101,6 +114,37 @@ class Quiz {
         }
 
         return ['success' => true, 'message' => 'Thêm câu hỏi thành công!'];
+    }
+
+    public function suaCauHoi($id, $noi_dung) {
+        $stmt = $this->db->prepare("UPDATE cau_hoi SET noi_dung = ? WHERE id = ?");
+        $stmt->bind_param("si", $noi_dung, $id);
+        return $stmt->execute();
+    }
+
+    public function xoaCauHoi($id) {
+        $stmt = $this->db->prepare("DELETE FROM cau_hoi WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
+    public function themDapAn($id_cau_hoi, $noi_dung, $la_dung) {
+        $stmt = $this->db->prepare("INSERT INTO dap_an (id_cau_hoi, noi_dung, la_dap_an_dung) VALUES (?, ?, ?)");
+        $stmt->bind_param("isi", $id_cau_hoi, $noi_dung, $la_dung);
+        return $stmt->execute();
+    }
+
+    public function xoaDapAn($id) {
+        $stmt = $this->db->prepare("DELETE FROM dap_an WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
+    public function datDapAnDung($id_cau_hoi, $dap_an_dung_id) {
+        $this->db->query("UPDATE dap_an SET la_dap_an_dung = 0 WHERE id_cau_hoi = $id_cau_hoi");
+        $stmt = $this->db->prepare("UPDATE dap_an SET la_dap_an_dung = 1 WHERE id = ?");
+        $stmt->bind_param("i", $dap_an_dung_id);
+        return $stmt->execute();
     }
 
     public function nopBai($id_hoc_vien, $id_quiz, $dap_an_chon, $thoi_gian_lam_bai) {

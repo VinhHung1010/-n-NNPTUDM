@@ -272,8 +272,8 @@ include __DIR__ . '/../../views/layouts/header.php';
                     </div>
                     <?php if ($la_khoa_tra_phi): ?>
                         <p class="small text-muted mb-3 px-1">
-                            <i class="fas fa-credit-card me-1"></i>
-                            Thanh toán trực tuyến (demo). Sau khi thanh toán thành công, khóa học được kích hoạt ngay.
+                            <i class="fas fa-university me-1"></i>
+                            Thanh toán qua chuyển khoản ngân hàng (VietQR). Khóa học được kích hoạt ngay sau khi thanh toán.
                         </p>
                     <?php endif; ?>
 

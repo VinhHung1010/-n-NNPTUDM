@@ -11,6 +11,14 @@ define('SITE_NAME', 'E-LEARNING Việt Nam');
 define('SITE_URL', 'http://localhost/-n-NNPTUDM');
 define('VIEWS_URL', SITE_URL . '/views');
 
+// ─── Thanh toán qua VietQR (chuyển khoản ngân hàng) ───
+// Cấu hình tài khoản nhận tiền — dùng cho VietQR.io
+define('QR_BANK_ID',   '970403');               // Mã ngân hàng Techcombank
+define('QR_BANK_NAME', 'TECHCOMBANK');           // Tên ngân hàng viết HOA
+define('QR_STK',       '123456789');            // Số tài khoản nhận tiền
+define('QR_CHU_TK',    'NGUYEN VAN A');         // Tên chủ tài khoản
+// ─────────────────────────────────────────────────────────
+
 // Thanh toán: demo = mô phỏng cổng (localhost); sau này có thể đổi sang vnpay/momo
 define('THANH_TOAN_KENH', 'demo');
 

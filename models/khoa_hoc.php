@@ -102,5 +102,52 @@ class KhoaHoc {
         $result = $this->db->query($sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function layTatCaAdmin() {
+        $sql = "SELECT kh.*, nd.ho_ten AS ten_giao_vien, dm.ten_danh_muc,
+                       (SELECT COUNT(*) FROM bai_hoc WHERE id_khoa_hoc = kh.id) AS so_bai_hoc,
+                       (SELECT COUNT(*) FROM dang_ky_khoa_hoc WHERE id_khoa_hoc = kh.id) AS so_hoc_vien
+                FROM khoa_hoc kh
+                LEFT JOIN nguoi_dung nd ON kh.id_nguoi_tao = nd.id
+                LEFT JOIN danh_muc dm ON kh.id_danh_muc = dm.id
+                ORDER BY kh.ngay_tao DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function capNhatTrangThai($id, $trang_thai) {
+        $allowed = ['ban_nhap', 'da_duyet', 'bi_an'];
+        if (!in_array($trang_thai, $allowed)) return false;
+        $stmt = $this->db->prepare("UPDATE khoa_hoc SET trang_thai = ? WHERE id = ?");
+        $stmt->bind_param("si", $trang_thai, $id);
+        return $stmt->execute();
+    }
+
+    public function layBaiHoc($khoa_hoc_id) {
+        $stmt = $this->db->prepare("
+            SELECT bh.*,
+                   (SELECT COUNT(*) FROM quiz WHERE id_bai_hoc = bh.id) AS so_quiz
+            FROM bai_hoc bh
+            WHERE bh.id_khoa_hoc = ?
+            ORDER BY bh.thu_tu
+        ");
+        $stmt->bind_param("i", $khoa_hoc_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function layHocVien($khoa_hoc_id) {
+        $stmt = $this->db->prepare("
+            SELECT nd.*, dk.ngay_dang_ky, dk.trang_thai AS trang_thai_dk
+            FROM dang_ky_khoa_hoc dk
+            JOIN nguoi_dung nd ON dk.id_hoc_vien = nd.id
+            WHERE dk.id_khoa_hoc = ?
+            ORDER BY dk.ngay_dang_ky DESC
+        ");
+        $stmt->bind_param("i", $khoa_hoc_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>

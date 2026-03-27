@@ -104,7 +104,7 @@ if (!isset($page_title)) {
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?php echo SITE_URL; ?>/views/khoa-hoc/index.php">
+                <a class="nav-link <?php if (strpos($_SERVER['SCRIPT_NAME'], 'khoa-hoc') !== false) echo 'active'; ?>" href="<?php echo SITE_URL; ?>/admin/khoa-hoc/index.php">
                     <i class="fas fa-book me-2"></i>Khóa học
                 </a>
             </li>

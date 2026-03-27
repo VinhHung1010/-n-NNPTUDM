@@ -393,6 +393,9 @@ function isActive($pattern, $path = null) {
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
                             <?php endif; ?>
+                            <li><a class="dropdown-item" href="<?php echo VIEWS_URL; ?>/chung-chi/xem.php">
+                                <i class="fas fa-award me-2 text-warning"></i>Chứng chỉ của tôi
+                            </a></li>
                             <li><a class="dropdown-item" href="<?php echo VIEWS_URL; ?>/tai-khoan/ho-so.php">
                                 <i class="fas fa-id-card me-2 text-primary"></i>Hồ sơ
                             </a></li>

@@ -117,6 +117,18 @@ CREATE TABLE IF NOT EXISTS dang_ky_khoa_hoc (
     UNIQUE KEY unique_register (id_hoc_vien, id_khoa_hoc)
 ) ENGINE=InnoDB;
 
+-- Bảng chứng chỉ hoàn thành khóa học
+CREATE TABLE IF NOT EXISTS certificates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_hoc_vien INT NOT NULL,
+    id_khoa_hoc INT NOT NULL,
+    ma_chung_chi VARCHAR(50) UNIQUE NOT NULL,
+    ngay_cap TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_hoc_vien) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_khoa_hoc) REFERENCES khoa_hoc(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_cert (id_hoc_vien, id_khoa_hoc)
+) ENGINE=InnoDB;
+
 -- Dữ liệu mẫu: Danh mục
 INSERT INTO danh_muc (ten_danh_muc, mo_ta) VALUES
 ('Lập trình Web', 'Các khóa học về lập trình web'),

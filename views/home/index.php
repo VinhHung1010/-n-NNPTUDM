@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../models/auth.php';
 require_once __DIR__ . '/../../models/khoa_hoc.php';
 require_once __DIR__ . '/../../models/quiz.php';
 require_once __DIR__ . '/../../models/tien_do.php';
+require_once __DIR__ . '/../../models/chung_chi.php';
 
 $page_title = 'Tiến độ học tập - ' . SITE_NAME;
 $auth = new Auth();
@@ -17,6 +18,7 @@ $nguoi_dung = $auth->layThongTinNguoiDung();
 $kh_model   = new KhoaHoc();
 $quiz_model = new Quiz();
 $td_model   = new TienDo();
+$cc_model   = new ChungChi();
 
 // Lấy khóa học đã đăng ký
 $khoa_dang_ky = $kh_model->layKhoaHocCuaHocVien($nguoi_dung['id']);
@@ -24,10 +26,11 @@ $khoa_dang_ky = $kh_model->layKhoaHocCuaHocVien($nguoi_dung['id']);
 // Lấy kết quả quiz
 $ket_qua_list = $quiz_model->layKetQua($nguoi_dung['id']);
 
-// Tổng hợp % cho từng khóa học
+// Tổng hợp % cho từng khóa học + chứng chỉ
 foreach ($khoa_dang_ky as &$k) {
     $k['phan_tram'] = $td_model->tinhPhanTram($nguoi_dung['id'], $k['id']);
     $k['da_hoan']  = $td_model->daHoanThanhKhoaHoc($nguoi_dung['id'], $k['id']);
+    $k['chung_chi'] = $cc_model->lay($nguoi_dung['id'], $k['id']);
 }
 unset($k);
 
@@ -182,9 +185,15 @@ include __DIR__ . '/../layouts/header.php';
                                                     </span>
                                                 </div>
                                                 <?php if ($pct >= 100): ?>
-                                                    <span class="badge bg-success mt-1" style="font-size:0.65rem">
+                                                    <span class="badge bg-success mt-1 me-1" style="font-size:0.65rem">
                                                         <i class="fas fa-trophy me-1"></i>Hoàn thành
                                                     </span>
+                                                    <?php if (!empty($k['chung_chi'])): ?>
+                                                        <a href="<?php echo VIEWS_URL; ?>/chung-chi/xem.php?ma=<?php echo urlencode($k['chung_chi']['ma_chung_chi']); ?>"
+                                                           class="badge bg-warning text-dark mt-1 text-decoration-none" style="font-size:0.65rem">
+                                                            <i class="fas fa-award me-1"></i>Chứng chỉ
+                                                        </a>
+                                                    <?php endif; ?>
                                                 <?php endif; ?>
                                             </td>
                                             <td class="pe-4 text-end">

@@ -4,12 +4,14 @@ require_once __DIR__ . '/../../models/auth.php';
 require_once __DIR__ . '/../../models/bai_hoc.php';
 require_once __DIR__ . '/../../models/khoa_hoc.php';
 require_once __DIR__ . '/../../models/tien_do.php';
+require_once __DIR__ . '/../../models/chung_chi.php';
 
 $page_title = 'Chi tiết Bài học - ' . SITE_NAME;
 $auth = new Auth();
 $bai_hoc_model = new BaiHoc();
 $khoa_hoc_model = new KhoaHoc();
 $td_model = new TienDo();
+$cc_model = new ChungChi();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -62,6 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_hoan_thanh']) 
     $phan_tram    = $td_model->tinhPhanTram($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
     $da_hoan_thanh_kh = $td_model->daHoanThanhKhoaHoc($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
     $tien_do_map  = $td_model->layTienDoKhoaHoc($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
+
+    // Nếu hoàn thành 100% → tạo chứng chỉ
+    if ($da_hoan_thanh_kh) {
+        $chung_chi = $cc_model->tao($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
+    }
+}
+
+// Kiểm tra đã có chứng chỉ chưa
+$chung_chi = null;
+if ($da_xac_nhan && $nguoi_dung) {
+    $chung_chi = $cc_model->lay($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
 }
 
 // Tìm bài học trước và sau
@@ -96,14 +109,26 @@ include __DIR__ . '/../../views/layouts/header.php';
 
     <?php if ($thong_bao_td) echo $thong_bao_td; ?>
 
-    <!-- Thông báo hoàn thành khóa học -->
+    <!-- Thông báo hoàn thành khóa học + nhận chứng chỉ -->
     <?php if ($da_xac_nhan && isset($da_hoan_thanh_kh) && $da_hoan_thanh_kh): ?>
-        <div class="alert alert-success d-flex align-items-center gap-2 mb-3">
-            <i class="fas fa-trophy fa-lg"></i>
-            <div>
-                <strong>Chúc mừng!</strong> Bạn đã hoàn thành toàn bộ khóa học
-                <strong><?php echo htmlspecialchars($khoa_hoc['ten_khoa_hoc']); ?></strong>!
+        <div class="alert alert-success d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-trophy fa-lg"></i>
+                <div>
+                    <strong>Chúc mừng!</strong> Bạn đã hoàn thành toàn bộ khóa học
+                    <strong><?php echo htmlspecialchars($khoa_hoc['ten_khoa_hoc']); ?></strong>!
+                </div>
             </div>
+            <?php if ($chung_chi): ?>
+                <a href="<?php echo VIEWS_URL; ?>/chung-chi/xem.php?ma=<?php echo urlencode($chung_chi['ma_chung_chi']); ?>"
+                   class="btn btn-warning text-dark fw-semibold btn-sm">
+                    <i class="fas fa-award me-1"></i>Xem chứng chỉ
+                </a>
+            <?php else: ?>
+                <span class="badge bg-warning text-dark">
+                    <i class="fas fa-award me-1"></i>Chứng chỉ đã được cấp
+                </span>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 

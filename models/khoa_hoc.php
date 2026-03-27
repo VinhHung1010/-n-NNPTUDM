@@ -150,6 +150,21 @@ class KhoaHoc {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function layKhoaHocCuaGiaoVien($giao_vien_id) {
+        $stmt = $this->db->prepare("
+            SELECT kh.*, dm.ten_danh_muc,
+                   (SELECT COUNT(*) FROM bai_hoc WHERE id_khoa_hoc = kh.id) AS so_bai_hoc,
+                   (SELECT COUNT(*) FROM dang_ky_khoa_hoc WHERE id_khoa_hoc = kh.id AND trang_thai = 'da_xac_nhan') AS so_hoc_vien
+            FROM khoa_hoc kh
+            LEFT JOIN danh_muc dm ON kh.id_danh_muc = dm.id
+            WHERE kh.id_nguoi_tao = ?
+            ORDER BY kh.ngay_tao DESC
+        ");
+        $stmt->bind_param("i", $giao_vien_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function layKhoaHocCuaHocVien($hoc_vien_id) {
         $stmt = $this->db->prepare("
             SELECT kh.*, dk.ngay_dang_ky AS ngay_dang_ky_khoa, dk.trang_thai AS trang_thai_dk,

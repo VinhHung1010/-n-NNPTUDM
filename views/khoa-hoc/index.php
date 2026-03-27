@@ -21,6 +21,8 @@ if ($tu_khoa !== '') {
     $khoa_hoc_list = array_filter($khoa_hoc_list,
         fn($k) => stripos($k['ten_khoa_hoc'], $tu_khoa) !== false
                || stripos($k['ten_giao_vien'] ?? '', $tu_khoa) !== false
+               || stripos($k['mo_ta'] ?? '', $tu_khoa) !== false
+               || stripos($k['ten_danh_muc'] ?? '', $tu_khoa) !== false
     );
 } elseif ($danh_muc_id > 0) {
     $khoa_hoc_list = array_filter($khoa_hoc_list,
@@ -55,7 +57,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                 <div class="col-md-6">
                     <div class="input-group">
                         <input type="text" name="tu_khoa" class="form-control"
-                               placeholder="Tìm tên khóa học..."
+                               placeholder="Tìm theo tên, mô tả, giảng viên, danh mục..."
                                value="<?php echo htmlspecialchars($tu_khoa); ?>">
                         <button class="btn btn-primary" type="submit">
                             <i class="fas fa-search"></i>

@@ -75,11 +75,28 @@ include __DIR__ . '/partials/layout_start.php';
     </div>
 </div>
 
-<div class="card stat-card">
-    <div class="card-body">
-        <h2 class="h5 mb-3"><i class="fas fa-circle-info me-2 text-primary"></i>Hướng dẫn nhanh</h2>
-        <p class="text-muted mb-2">Đây là khu vực quản trị tách biệt với giao diện học viên. Bạn có thể mở <strong>Khóa học</strong> hoặc <strong>Trang chủ công khai</strong> từ menu bên trái khi cần xem như người dùng thường.</p>
-        <p class="text-muted mb-0">Các chức năng quản lý chi tiết (duyệt khóa học, người dùng, …) có thể bổ sung dần trên nhánh tính năng tương ứng.</p>
+<div class="row g-3">
+    <div class="col-md-4">
+        <a href="<?php echo SITE_URL; ?>/admin/nguoi-dung/index.php" class="text-decoration-none">
+            <div class="card stat-card h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-users"></i></div>
+                    <div>
+                        <div class="text-muted small">Quản lý</div>
+                        <div class="fw-semibold text-dark">Người dùng</div>
+                        <div class="small text-muted">Xem, khóa / mở khóa</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-8">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-2"><i class="fas fa-circle-info me-2 text-primary"></i>Hướng dẫn nhanh</h2>
+                <p class="text-muted small mb-0">Sử dụng menu bên trái hoặc các thẻ liên kết để truy cập chức năng quản trị. Tài khoản quản trị không thể bị khóa.</p>
+            </div>
+        </div>
     </div>
 </div>
 

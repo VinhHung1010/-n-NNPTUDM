@@ -84,8 +84,13 @@ if (!isset($page_title)) {
         </div>
         <ul class="nav flex-column py-2">
             <li class="nav-item">
-                <a class="nav-link active" href="<?php echo SITE_URL; ?>/admin/index.php">
+                <a class="nav-link <?php if (basename($_SERVER['SCRIPT_NAME']) === 'index.php' && !isset($_GET['p'])) echo 'active'; ?>" href="<?php echo SITE_URL; ?>/admin/index.php">
                     <i class="fas fa-gauge-high me-2"></i>Tổng quan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <?php if (strpos($_SERVER['SCRIPT_NAME'], 'nguoi-dung') !== false) echo 'active'; ?>" href="<?php echo SITE_URL; ?>/admin/nguoi-dung/index.php">
+                    <i class="fas fa-users me-2"></i>Người dùng
                 </a>
             </li>
             <li class="nav-item">

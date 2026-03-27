@@ -117,6 +117,23 @@ CREATE TABLE IF NOT EXISTS dang_ky_khoa_hoc (
     UNIQUE KEY unique_register (id_hoc_vien, id_khoa_hoc)
 ) ENGINE=InnoDB;
 
+-- Bảng giao dịch thanh toán khóa học (trả phí)
+CREATE TABLE IF NOT EXISTS giao_dich_thanh_toan (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_hoc_vien INT NOT NULL,
+    id_khoa_hoc INT NOT NULL,
+    so_tien DECIMAL(12,0) NOT NULL,
+    ma_giao_dich VARCHAR(64) NOT NULL,
+    trang_thai ENUM('cho_thanh_toan', 'thanh_cong', 'that_bai', 'huy') DEFAULT 'cho_thanh_toan',
+    kenh VARCHAR(32) DEFAULT 'demo',
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ngay_cap_nhat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_hoc_vien) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_khoa_hoc) REFERENCES khoa_hoc(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_ma_giao_dich (ma_giao_dich),
+    INDEX idx_hv_kh (id_hoc_vien, id_khoa_hoc)
+) ENGINE=InnoDB;
+
 -- Bảng chứng chỉ hoàn thành khóa học
 CREATE TABLE IF NOT EXISTS certificates (
     id INT AUTO_INCREMENT PRIMARY KEY,

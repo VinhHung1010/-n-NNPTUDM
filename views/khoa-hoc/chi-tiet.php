@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../models/auth.php';
 require_once __DIR__ . '/../../models/khoa_hoc.php';
+require_once __DIR__ . '/../../models/thanh_toan.php';
 
 $page_title = 'Chi tiết Khóa học - ' . SITE_NAME;
 $auth = new Auth();
@@ -13,29 +14,100 @@ if ($id <= 0) { header('Location: index.php'); exit; }
 $khoa_hoc = $khoa_hoc_model->layTheoId($id);
 if (!$khoa_hoc) { header('Location: index.php'); exit; }
 
-// Xử lý đăng ký
+$gia_khoa = (int)($khoa_hoc['gia_tien'] ?? 0);
+$la_khoa_tra_phi = $gia_khoa > 0;
+
+// Xử lý đăng ký / bắt đầu thanh toán
 $thong_bao = '';
 $thong_bao_type = 'success';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dang_ky'])) {
+
+function chuyenToiTrangThanhToan($ma) {
+    header('Location: ' . VIEWS_URL . '/khoa-hoc/thanh-toan.php?ma=' . urlencode($ma));
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['dang_ky']) || isset($_POST['bat_dau_thanh_toan']))) {
     if (!$auth->kiemTraDangNhap()) {
         header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
         exit;
     }
     $nd = $auth->layThongTinNguoiDung();
+    $tt = $khoa_hoc_model->daDangKy($nd['id'], $id);
+    $tt_model = new ThanhToan();
 
-    $trang_thai_hien_tai = $khoa_hoc_model->daDangKy($nd['id'], $id);
-
-    // Đã có đăng ký (chờ hoặc đã duyệt) → không tạo lại
-    if ($trang_thai_hien_tai !== null) {
-        $thong_bao = 'Bạn đã đăng ký khóa học này rồi.';
-        $thong_bao_type = 'warning';
-    } else {
-        if ($khoa_hoc_model->dangKy($nd['id'], $id)) {
-            $thong_bao = 'Đăng ký khóa học thành công! Đang chờ quản trị duyệt.';
+    if (isset($_POST['bat_dau_thanh_toan'])) {
+        if (!$la_khoa_tra_phi) {
+            $thong_bao = 'Khóa học miễn phí không cần thanh toán trực tuyến.';
+            $thong_bao_type = 'warning';
+        } elseif ($tt === 'da_xac_nhan') {
+            $thong_bao = 'Bạn đã có quyền truy cập khóa học.';
             $thong_bao_type = 'info';
         } else {
-            $thong_bao = 'Đăng ký thất bại. Vui lòng thử lại.';
+            $pending = $tt_model->layGiaoDichChoGanNhat($nd['id'], $id);
+            if ($pending) {
+                chuyenToiTrangThanhToan($pending['ma_giao_dich']);
+            }
+            $r = $tt_model->taoGiaoDich($nd['id'], $id, $gia_khoa);
+            if (!empty($r['success'])) {
+                chuyenToiTrangThanhToan($r['ma_giao_dich']);
+            }
+            $thong_bao = $r['message'] ?? 'Không tạo được giao dịch thanh toán.';
             $thong_bao_type = 'danger';
+        }
+    }
+
+    if (isset($_POST['dang_ky'])) {
+        if ($la_khoa_tra_phi) {
+            if ($tt === 'cho_xu_ly') {
+                $pending = $tt_model->layGiaoDichChoGanNhat($nd['id'], $id);
+                if ($pending) {
+                    chuyenToiTrangThanhToan($pending['ma_giao_dich']);
+                }
+                $r = $tt_model->taoGiaoDich($nd['id'], $id, $gia_khoa);
+                if (!empty($r['success'])) {
+                    chuyenToiTrangThanhToan($r['ma_giao_dich']);
+                }
+                $thong_bao = $r['message'] ?? 'Không tạo được giao dịch thanh toán.';
+                $thong_bao_type = 'danger';
+            } elseif ($tt === 'da_xac_nhan') {
+                $thong_bao = 'Bạn đã đăng ký và có quyền truy cập khóa học.';
+                $thong_bao_type = 'info';
+            } elseif ($tt === null || $tt === 'da_huy') {
+                $pending = $tt_model->layGiaoDichChoGanNhat($nd['id'], $id);
+                if ($pending) {
+                    chuyenToiTrangThanhToan($pending['ma_giao_dich']);
+                }
+                $r = $tt_model->taoGiaoDich($nd['id'], $id, $gia_khoa);
+                if (!empty($r['success'])) {
+                    chuyenToiTrangThanhToan($r['ma_giao_dich']);
+                }
+                $thong_bao = $r['message'] ?? 'Không tạo được giao dịch thanh toán.';
+                $thong_bao_type = 'danger';
+            } else {
+                $thong_bao = 'Trạng thái đăng ký không hợp lệ.';
+                $thong_bao_type = 'warning';
+            }
+        } else {
+            if ($tt === 'da_xac_nhan' || $tt === 'cho_xu_ly') {
+                $thong_bao = 'Bạn đã đăng ký khóa học này rồi.';
+                $thong_bao_type = 'warning';
+            } elseif ($tt === 'da_huy') {
+                if ($khoa_hoc_model->dangKyLaiSauKhiHuy($nd['id'], $id)) {
+                    $thong_bao = 'Đăng ký lại thành công! Đang chờ quản trị duyệt.';
+                    $thong_bao_type = 'info';
+                } else {
+                    $thong_bao = 'Đăng ký lại thất bại. Vui lòng thử lại.';
+                    $thong_bao_type = 'danger';
+                }
+            } else {
+                if ($khoa_hoc_model->dangKy($nd['id'], $id)) {
+                    $thong_bao = 'Đăng ký khóa học thành công! Đang chờ quản trị duyệt.';
+                    $thong_bao_type = 'info';
+                } else {
+                    $thong_bao = 'Đăng ký thất bại. Vui lòng thử lại.';
+                    $thong_bao_type = 'danger';
+                }
+            }
         }
     }
 }
@@ -51,6 +123,11 @@ $nguoi_dung_hien_tai = $auth->layThongTinNguoiDung();
 $trang_thai_dk = $nguoi_dung_hien_tai
     ? $khoa_hoc_model->daDangKy($nguoi_dung_hien_tai['id'], $id)
     : null;
+
+if (isset($_GET['thanh_toan']) && $_GET['thanh_toan'] === 'ok') {
+    $thong_bao = 'Thanh toán thành công! Bạn đã được ghi danh vào khóa học.';
+    $thong_bao_type = 'success';
+}
 
 include __DIR__ . '/../../views/layouts/header.php';
 ?>
@@ -193,6 +270,12 @@ include __DIR__ . '/../../views/layouts/header.php';
                             ?>
                         </span>
                     </div>
+                    <?php if ($la_khoa_tra_phi): ?>
+                        <p class="small text-muted mb-3 px-1">
+                            <i class="fas fa-credit-card me-1"></i>
+                            Thanh toán trực tuyến (demo). Sau khi thanh toán thành công, khóa học được kích hoạt ngay.
+                        </p>
+                    <?php endif; ?>
 
                     <?php if ($auth->kiemTraDangNhap()): ?>
                         <?php if ($trang_thai_dk === 'da_xac_nhan'): ?>
@@ -212,19 +295,35 @@ include __DIR__ . '/../../views/layouts/header.php';
                                 </div>
                             </div>
                         <?php elseif ($trang_thai_dk === 'cho_xu_ly'): ?>
-                            <!-- Đang chờ duyệt -->
-                            <div class="alert alert-warning py-2 mb-2">
-                                <i class="fas fa-clock me-1"></i>
-                                Đăng ký đang chờ duyệt.
-                            </div>
-                            <a href="<?php echo VIEWS_URL; ?>/home/index.php" class="btn btn-outline-secondary w-100 py-2">
-                                <i class="fas fa-chart-line me-1"></i>Xem tiến độ
-                            </a>
+                            <?php if ($la_khoa_tra_phi): ?>
+                                <!-- Khóa trả phí: chờ thanh toán / kích hoạt -->
+                                <div class="alert alert-warning py-2 mb-2 text-start">
+                                    <i class="fas fa-wallet me-1"></i>
+                                    Khóa học có phí — vui lòng hoàn tất thanh toán để được học ngay.
+                                </div>
+                                <form method="POST" class="d-grid gap-2">
+                                    <button type="submit" name="bat_dau_thanh_toan" class="btn btn-success w-100 py-2 fw-semibold">
+                                        <i class="fas fa-money-bill-wave me-1"></i>Thanh toán để kích hoạt
+                                    </button>
+                                </form>
+                                <a href="<?php echo VIEWS_URL; ?>/home/index.php" class="btn btn-outline-secondary w-100 py-2 mt-2">
+                                    <i class="fas fa-chart-line me-1"></i>Xem tiến độ
+                                </a>
+                            <?php else: ?>
+                                <div class="alert alert-warning py-2 mb-2">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Đăng ký đang chờ duyệt.
+                                </div>
+                                <a href="<?php echo VIEWS_URL; ?>/home/index.php" class="btn btn-outline-secondary w-100 py-2">
+                                    <i class="fas fa-chart-line me-1"></i>Xem tiến độ
+                                </a>
+                            <?php endif; ?>
                         <?php elseif ($trang_thai_dk === 'da_huy'): ?>
                             <!-- Đã bị hủy → cho đăng ký lại -->
                             <form method="POST">
                                 <button type="submit" name="dang_ky" class="btn btn-primary w-100 py-2 fw-semibold mb-2">
-                                    <i class="fas fa-redo me-1"></i>Đăng ký lại
+                                    <i class="fas fa-redo me-1"></i>
+                                    <?php echo $la_khoa_tra_phi ? 'Mua & đăng ký lại' : 'Đăng ký lại'; ?>
                                 </button>
                             </form>
                             <a href="<?php echo VIEWS_URL; ?>/home/index.php" class="btn btn-outline-secondary w-100 py-2">
@@ -234,8 +333,8 @@ include __DIR__ . '/../../views/layouts/header.php';
                             <!-- Chưa đăng ký -->
                             <form method="POST">
                                 <button type="submit" name="dang_ky" class="btn btn-primary w-100 py-2 fw-semibold mb-2">
-                                    <i class="fas fa-graduation-cap me-1"></i>
-                                    <?php echo ((int)$khoa_hoc['gia_tien'] === 0) ? 'Đăng ký miễn phí' : 'Đăng ký khóa học'; ?>
+                                    <i class="fas fa-<?php echo $la_khoa_tra_phi ? 'credit-card' : 'graduation-cap'; ?> me-1"></i>
+                                    <?php echo $la_khoa_tra_phi ? 'Thanh toán & đăng ký' : 'Đăng ký miễn phí'; ?>
                                 </button>
                             </form>
                             <a href="<?php echo VIEWS_URL; ?>/home/index.php" class="btn btn-outline-secondary w-100 py-2">

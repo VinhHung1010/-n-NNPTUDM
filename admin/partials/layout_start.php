@@ -109,6 +109,11 @@ if (!isset($page_title)) {
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <?php if (strpos($_SERVER['SCRIPT_NAME'], 'bai-hoc') !== false) echo 'active'; ?>" href="<?php echo SITE_URL; ?>/admin/bai-hoc/index.php">
+                    <i class="fas fa-file-lines me-2"></i>Bài học
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="<?php echo SITE_URL; ?>/views/home/index.php">
                     <i class="fas fa-house me-2"></i>Trang chủ công khai
                 </a>

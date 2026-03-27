@@ -116,6 +116,19 @@ include __DIR__ . '/partials/layout_start.php';
         </a>
     </div>
     <div class="col-sm-6 col-md-3">
+        <a href="<?php echo SITE_URL; ?>/admin/bai-hoc/index.php" class="text-decoration-none">
+            <div class="card stat-card h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="icon bg-purple bg-opacity-10" style="color:#7c3aed"><i class="fas fa-file-lines"></i></div>
+                    <div>
+                        <div class="text-muted small">Quản lý</div>
+                        <div class="fw-semibold text-dark">Bài học</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-md-3">
         <a href="<?php echo SITE_URL; ?>/admin/quiz/index.php" class="text-decoration-none">
             <div class="card stat-card h-100">
                 <div class="card-body d-flex align-items-center gap-3">

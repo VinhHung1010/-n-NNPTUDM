@@ -65,6 +65,8 @@ $qr_url = sprintf(
     rawurlencode($chu_tk)
 );
 
+$qr_co_dinh_url = defined('QR_CO_DINH_URL') ? QR_CO_DINH_URL : '';
+
 include __DIR__ . '/../../views/layouts/header.php';
 ?>
 
@@ -106,6 +108,14 @@ include __DIR__ . '/../../views/layouts/header.php';
     border-radius: 20px; padding: 4px 16px;
     font-weight: 700; font-size: 1.05rem;
     display: inline-block;
+}
+.qr-pay-img {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+    border: 3px solid white;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    background: #fff;
 }
 </style>
 
@@ -180,22 +190,38 @@ include __DIR__ . '/../../views/layouts/header.php';
                 </div>
             </div>
 
-            <!-- Mã QR -->
-            <div class="text-center mb-3">
-                <img src="<?php echo htmlspecialchars($qr_url); ?>"
-                     alt="Mã QR chuyển khoản"
-                     class="rounded"
-                     style="width:200px;height:200px;border:3px solid white;box-shadow:0 4px 16px rgba(0,0,0,.12)"
-                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                <div style="display:none;width:200px;height:200px;margin:0 auto;border:3px solid #e0e0e0;border-radius:8px;align-items:center;justify-content:center;flex-direction:column;color:#aaa;font-size:.85rem"
-                     class="rounded">
-                    <i class="fas fa-qrcode fa-3x mb-2"></i>
-                    Không tải được mã QR
+            <!-- Mã QR thanh toán: cố định + VietQR -->
+            <div class="row g-4 justify-content-center mb-3">
+                <?php if ($qr_co_dinh_url !== ''): ?>
+                <div class="col-sm-6 text-center">
+                    <p class="small fw-semibold text-muted mb-2">
+                        <i class="fas fa-qrcode me-1"></i>Mã QR thanh toán
+                    </p>
+                    <img src="<?php echo htmlspecialchars($qr_co_dinh_url); ?>"
+                         alt="Mã QR thanh toán"
+                         class="rounded qr-pay-img">
                 </div>
-                <div class="mt-3">
+                <?php endif; ?>
+                <div class="col-sm-6 text-center">
+                    <p class="small fw-semibold text-muted mb-2">
+                        <i class="fas fa-university me-1"></i>VietQR (số tiền &amp; mã đơn)
+                    </p>
+                    <img src="<?php echo htmlspecialchars($qr_url); ?>"
+                         alt="Mã QR VietQR chuyển khoản"
+                         class="rounded qr-pay-img"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                    <div style="display:none;width:200px;height:200px;margin:0 auto;border:3px solid #e0e0e0;border-radius:8px;align-items:center;justify-content:center;flex-direction:column;color:#aaa;font-size:.85rem"
+                         class="rounded">
+                        <i class="fas fa-qrcode fa-3x mb-2"></i>
+                        Không tải được VietQR
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mb-3">
+                <div class="mt-1">
                     <span class="qr-amount-tag"><?php echo $so_tien_hien; ?>đ</span>
                 </div>
-                <p class="small text-muted mt-2 mb-0">Quét mã QR bằng app ngân hàng hoặc<br>chuyển khoản thủ công bên dưới</p>
+                <p class="small text-muted mt-2 mb-0">Quét một trong hai mã bằng app ngân hàng / ví, hoặc chuyển khoản thủ công bên dưới.</p>
             </div>
 
             <!-- Thông tin tài khoản -->

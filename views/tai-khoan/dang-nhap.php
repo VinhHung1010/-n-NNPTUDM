@@ -5,9 +5,13 @@ require_once __DIR__ . '/../../models/auth.php';
 $page_title = 'Đăng nhập - ' . SITE_NAME;
 $auth = new Auth();
 
-// Nếu đã đăng nhập thì chuyển về trang chủ
+// Nếu đã đăng nhập thì chuyển về đúng khu vực
 if ($auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/index.php');
+    if ($auth->laQuanTri()) {
+        header('Location: ' . VIEWS_URL . '/admin/index.php');
+    } else {
+        header('Location: ' . SITE_URL . '/index.php');
+    }
     exit;
 }
 
@@ -22,7 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $result = $auth->dangNhap($email, $mat_khau);
         if ($result['success']) {
-            header('Location: ' . SITE_URL . '/index.php');
+            if (($result['user']['vai_tro'] ?? '') === 'quan_tri') {
+                header('Location: ' . VIEWS_URL . '/admin/index.php');
+            } else {
+                header('Location: ' . SITE_URL . '/index.php');
+            }
             exit;
         } else {
             $error = $result['message'];
@@ -81,7 +89,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     <div class="text-center">
                         <p class="mb-0">
                             Chưa có tài khoản? 
-                            <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-ky.php" class="text-decoration-none">
+                            <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-ky.php" class="text-decoration-none">
                                 <strong>Đăng ký ngay</strong>
                             </a>
                         </p>

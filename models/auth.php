@@ -92,6 +92,14 @@ class Auth {
         return null;
     }
 
+    public function laQuanTri() {
+        if (!$this->kiemTraDangNhap()) {
+            return false;
+        }
+        $u = $this->layThongTinNguoiDung();
+        return ($u['vai_tro'] ?? '') === 'quan_tri';
+    }
+
     public function layNguoiDungTheoId($id) {
         $stmt = $this->db->prepare("SELECT * FROM nguoi_dung WHERE id = ?");
         $stmt->bind_param("i", $id);

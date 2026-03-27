@@ -8,7 +8,7 @@ $page_title = 'Kết quả Quiz - ' . SITE_NAME;
 $auth = new Auth();
 
 if (!$auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/tai-khoan/dang-nhap.php');
+    header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
     exit;
 }
 

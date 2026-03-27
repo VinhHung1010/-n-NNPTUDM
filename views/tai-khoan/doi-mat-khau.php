@@ -6,7 +6,7 @@ $page_title = 'Đổi mật khẩu - ' . SITE_NAME;
 $auth = new Auth();
 
 if (!$auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/tai-khoan/dang-nhap.php');
+    header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
     exit;
 }
 
@@ -53,7 +53,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     <?php if ($success): ?>
                         <div class="alert alert-success">
                             <?php echo $success; ?>
-                            <a href="<?php echo SITE_URL; ?>/tai-khoan/ho-so.php" class="alert-link">
+                            <a href="<?php echo VIEWS_URL; ?>/tai-khoan/ho-so.php" class="alert-link">
                                 Quay về hồ sơ
                             </a>
                         </div>
@@ -86,7 +86,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     <hr class="my-4">
 
                     <div class="text-center">
-                        <a href="<?php echo SITE_URL; ?>/tai-khoan/ho-so.php" class="text-decoration-none">
+                        <a href="<?php echo VIEWS_URL; ?>/tai-khoan/ho-so.php" class="text-decoration-none">
                             <i class="fas fa-arrow-left me-2"></i>Quay về hồ sơ
                         </a>
                     </div>

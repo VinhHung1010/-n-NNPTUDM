@@ -6,7 +6,7 @@ $auth = new Auth();
 
 // Kiểm tra đăng nhập
 if (!$auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/tai-khoan/dang-nhap.php');
+    header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
     exit;
 }
 

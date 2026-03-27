@@ -7,12 +7,12 @@ $page_title = 'Thêm Khóa học - ' . SITE_NAME;
 $auth = new Auth();
 
 if (!$auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/tai-khoan/dang-nhap.php');
+    header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
     exit;
 }
 
 if (!in_array($_SESSION['nguoi_dung']['vai_tro'], ['giao_vien', 'quan_tri'])) {
-    header('Location: ' . SITE_URL . '/khoa-hoc/index.php');
+    header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php');
     exit;
 }
 

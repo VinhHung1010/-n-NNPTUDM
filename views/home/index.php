@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../models/auth.php';
-require_once __DIR__ . '/../models/khoa_hoc.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../models/auth.php';
+require_once __DIR__ . '/../../models/khoa_hoc.php';
 
 $page_title = 'Trang chủ - ' . SITE_NAME;
 $auth = new Auth();
@@ -22,7 +22,7 @@ if ($danh_muc_id > 0) {
     $khoa_hoc_list = $khoa_hoc->layTheoDanhMuc($danh_muc_id);
 }
 
-include __DIR__ . '/layouts/header.php';
+include __DIR__ . '/../layouts/header.php';
 ?>
 
 <!-- Hero Section -->
@@ -136,7 +136,7 @@ include __DIR__ . '/layouts/header.php';
                                 </div>
                             </div>
                             <div class="card-footer bg-white border-0">
-                                <a href="<?php echo SITE_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $kh['id']; ?>" 
+                                <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $kh['id']; ?>" 
                                    class="btn btn-primary w-100">
                                     <i class="fas fa-eye me-1"></i>Xem chi tiết
                                 </a>
@@ -149,4 +149,4 @@ include __DIR__ . '/layouts/header.php';
     </section>
 </div>
 
-<?php include __DIR__ . '/layouts/footer.php'; ?>
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

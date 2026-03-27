@@ -56,7 +56,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                         <div class="alert alert-success">
                             <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
                             <br>
-                            <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php" class="alert-link">
+                            <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php" class="alert-link">
                                 Nhấn vào đây để đăng nhập
                             </a>
                         </div>
@@ -106,7 +106,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     <div class="text-center">
                         <p class="mb-0">
                             Đã có tài khoản? 
-                            <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php" class="text-decoration-none">
+                            <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php" class="text-decoration-none">
                                 <strong>Đăng nhập ngay</strong>
                             </a>
                         </p>

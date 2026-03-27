@@ -9,7 +9,7 @@ $page_title = 'Làm bài Quiz - ' . SITE_NAME;
 $auth = new Auth();
 
 if (!$auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/tai-khoan/dang-nhap.php');
+    header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
     exit;
 }
 
@@ -17,14 +17,14 @@ $quiz_model = new Quiz();
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($id <= 0) {
-    header('Location: ' . SITE_URL . '/khoa-hoc/index.php');
+    header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php');
     exit;
 }
 
 $quiz = $quiz_model->layTheoId($id);
 
 if (!$quiz) {
-    header('Location: ' . SITE_URL . '/khoa-hoc/index.php');
+    header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php');
     exit;
 }
 
@@ -98,7 +98,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                         <a href="chi-tiet.php?id=<?php echo $id; ?>" class="btn btn-primary me-2">
                             <i class="fas fa-eye me-2"></i>Xem đáp án
                         </a>
-                        <a href="<?php echo SITE_URL; ?>/khoa-hoc/index.php" class="btn btn-secondary">
+                        <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/index.php" class="btn btn-secondary">
                             <i class="fas fa-home me-2"></i>Về trang chủ
                         </a>
                     </div>

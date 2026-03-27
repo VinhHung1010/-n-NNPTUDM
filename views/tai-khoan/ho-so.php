@@ -6,7 +6,7 @@ $page_title = 'Hồ sơ cá nhân - ' . SITE_NAME;
 $auth = new Auth();
 
 if (!$auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/tai-khoan/dang-nhap.php');
+    header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
     exit;
 }
 
@@ -89,7 +89,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i>Lưu thay đổi
                                 </button>
-                                <a href="<?php echo SITE_URL; ?>/tai-khoan/doi-mat-khau.php" class="btn btn-outline-secondary">
+                                <a href="<?php echo VIEWS_URL; ?>/tai-khoan/doi-mat-khau.php" class="btn btn-outline-secondary">
                                     <i class="fas fa-key me-2"></i>Đổi mật khẩu
                                 </a>
                             </form>

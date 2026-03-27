@@ -12,14 +12,14 @@ $khoa_hoc_model = new KhoaHoc();
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($id <= 0) {
-    header('Location: ' . SITE_URL . '/khoa-hoc/index.php');
+    header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php');
     exit;
 }
 
 $bai_hoc = $bai_hoc_model->layTheoId($id);
 
 if (!$bai_hoc) {
-    header('Location: ' . SITE_URL . '/khoa-hoc/index.php');
+    header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php');
     exit;
 }
 
@@ -39,8 +39,8 @@ include __DIR__ . '/../../views/layouts/header.php';
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/index.php">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/khoa-hoc/index.php">Khóa học</a></li>
-            <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>"><?php echo $khoa_hoc['ten_khoa_hoc']; ?></a></li>
+            <li class="breadcrumb-item"><a href="<?php echo VIEWS_URL; ?>/khoa-hoc/index.php">Khóa học</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>"><?php echo $khoa_hoc['ten_khoa_hoc']; ?></a></li>
             <li class="breadcrumb-item active"><?php echo $bai_hoc['tieu_de']; ?></li>
         </ol>
     </nav>
@@ -88,7 +88,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                                 <?php echo $next_lesson['tieu_de']; ?><i class="fas fa-chevron-right ms-2"></i>
                             </a>
                         <?php else: ?>
-                            <a href="<?php echo SITE_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>" class="btn btn-success">
+                            <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>" class="btn btn-success">
                                 <i class="fas fa-check-circle me-2"></i>Hoàn thành khóa học
                             </a>
                         <?php endif; ?>
@@ -119,12 +119,12 @@ include __DIR__ . '/../../views/layouts/header.php';
                                     </small>
                                 </div>
                                 <?php if ($auth->kiemTraDangNhap()): ?>
-                                    <a href="<?php echo SITE_URL; ?>/quiz/lam-bai.php?id=<?php echo $quiz['id']; ?>" 
+                                    <a href="<?php echo VIEWS_URL; ?>/quiz/lam-bai.php?id=<?php echo $quiz['id']; ?>" 
                                        class="btn btn-success">
                                         <i class="fas fa-play me-2"></i>Làm bài
                                     </a>
                                 <?php else: ?>
-                                    <a href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php" 
+                                    <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php" 
                                        class="btn btn-outline-success">
                                         <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để làm
                                     </a>
@@ -163,7 +163,7 @@ include __DIR__ . '/../../views/layouts/header.php';
                     </div>
                 </div>
                 <div class="card-footer">
-                    <a href="<?php echo SITE_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>" 
+                    <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>" 
                        class="btn btn-outline-secondary w-100 btn-sm">
                         <i class="fas fa-arrow-left me-2"></i>Quay về khóa học
                     </a>

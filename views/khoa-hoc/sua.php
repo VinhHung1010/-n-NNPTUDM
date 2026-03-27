@@ -6,12 +6,12 @@ require_once __DIR__ . '/../../models/khoa_hoc.php';
 $auth = new Auth();
 
 if (!$auth->kiemTraDangNhap()) {
-    header('Location: ' . SITE_URL . '/tai-khoan/dang-nhap.php');
+    header('Location: ' . VIEWS_URL . '/tai-khoan/dang-nhap.php');
     exit;
 }
 
 if ($_SESSION['nguoi_dung']['vai_tro'] !== 'quan_tri') {
-    header('Location: ' . SITE_URL . '/khoa-hoc/index.php');
+    header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php');
     exit;
 }
 

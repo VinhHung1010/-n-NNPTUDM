@@ -11,7 +11,7 @@
                     <h5>Liên kết</h5>
                     <ul class="list-unstyled">
                         <li><a href="<?php echo SITE_URL; ?>/index.php" class="text-white">Trang chủ</a></li>
-                        <li><a href="<?php echo SITE_URL; ?>/khoa-hoc/index.php" class="text-white">Khóa học</a></li>
+                        <li><a href="<?php echo VIEWS_URL; ?>/khoa-hoc/index.php" class="text-white">Khóa học</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">

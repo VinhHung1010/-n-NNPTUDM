@@ -134,13 +134,13 @@ $nguoi_dung = $auth->layThongTinNguoiDung();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo SITE_URL; ?>/khoa-hoc/index.php">
+                        <a class="nav-link" href="<?php echo VIEWS_URL; ?>/khoa-hoc/index.php">
                             <i class="fas fa-book me-1"></i> Khóa học
                         </a>
                     </li>
                     <?php if ($nguoi_dung): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo SITE_URL; ?>/tien-do/index.php">
+                            <a class="nav-link" href="<?php echo VIEWS_URL; ?>/home/index.php">
                                 <i class="fas fa-chart-line me-1"></i> Tiến độ
                             </a>
                         </li>
@@ -149,26 +149,32 @@ $nguoi_dung = $auth->layThongTinNguoiDung();
                                 <i class="fas fa-user me-1"></i> <?php echo $nguoi_dung['ho_ten']; ?>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/tai-khoan/ho-so.php">
+                                <?php if (($nguoi_dung['vai_tro'] ?? '') === 'quan_tri'): ?>
+                                <li><a class="dropdown-item" href="<?php echo VIEWS_URL; ?>/admin/index.php">
+                                    <i class="fas fa-shield-halved me-2"></i>Trang quản trị
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <?php endif; ?>
+                                <li><a class="dropdown-item" href="<?php echo VIEWS_URL; ?>/tai-khoan/ho-so.php">
                                     <i class="fas fa-id-card me-2"></i>Hồ sơ
                                 </a></li>
-                                <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/tai-khoan/doi-mat-khau.php">
+                                <li><a class="dropdown-item" href="<?php echo VIEWS_URL; ?>/tai-khoan/doi-mat-khau.php">
                                     <i class="fas fa-key me-2"></i>Đổi mật khẩu
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="<?php echo SITE_URL; ?>/tai-khoan/dang-xuat.php">
+                                <li><a class="dropdown-item text-danger" href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-xuat.php">
                                     <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
                                 </a></li>
                             </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo SITE_URL; ?>/tai-khoan/dang-nhap.php">
+                            <a class="nav-link" href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php">
                                 <i class="fas fa-sign-in-alt me-1"></i> Đăng nhập
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo SITE_URL; ?>/tai-khoan/dang-ky.php">
+                            <a class="nav-link" href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-ky.php">
                                 <i class="fas fa-user-plus me-1"></i> Đăng ký
                             </a>
                         </li>

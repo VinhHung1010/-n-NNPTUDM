@@ -81,6 +81,27 @@ include __DIR__ . '/../../views/layouts/header.php';
                 <span class="badge bg-secondary"><?php echo htmlspecialchars($gd['kenh'] ?? 'demo'); ?></span>
             </div>
 
+            <?php if ($gd['trang_thai'] === 'cho_thanh_toan'): ?>
+                <div class="text-center mb-4 p-3" style="background:#f8f9fa;border-radius:12px">
+                    <p class="small text-muted mb-2">Quét mã QR để thanh toán</p>
+                    <?php
+                    $so_tien_str = number_format((float)$gd['so_tien'], 0, ',', '');
+                    $nd_qr = $khoa_hoc['ten_khoa_hoc'] . ' | ' . number_format((float)$gd['so_tien'], 0, ',', '.') . 'đ | ' . $ma;
+                    $url_qr = 'https://img.vietqr.io/image/' . urlencode($nd_qr) . '?size=200&format=jpg';
+                    ?>
+                    <img src="<?php echo htmlspecialchars($url_qr); ?>"
+                         alt="Mã QR thanh toán"
+                         class="rounded"
+                         style="width:180px;height:180px;object-fit:cover;border:1px solid #dee2e6"
+                         onerror="this.outerHTML='<div class=\'text-muted small\'><i class=\'fas fa-qrcode fa-3x mb-2\'></i><br>Không tải được mã QR<br>Mã GD: ' + <?php echo json_encode($ma); ?> + '</div>'">
+                    <p class="small text-muted mt-2 mb-0">
+                        <strong><?php echo number_format((float)$gd['so_tien'], 0, ',', '.'); ?>đ</strong>
+                        &bull; <?php echo htmlspecialchars($khoa_hoc['ten_khoa_hoc']); ?>
+                    </p>
+                    <p class="small text-muted mb-0">Mã GD: <code><?php echo htmlspecialchars($ma); ?></code></p>
+                </div>
+            <?php endif; ?>
+
             <?php if ($gd['trang_thai'] === 'thanh_cong'): ?>
                 <div class="alert alert-success mb-0">
                     <i class="fas fa-check-circle me-1"></i>Giao dịch đã thanh toán thành công.
@@ -91,7 +112,8 @@ include __DIR__ . '/../../views/layouts/header.php';
                 </a>
             <?php elseif ($gd['trang_thai'] === 'cho_thanh_toan'): ?>
                 <div class="alert alert-info small mb-3">
-                    <strong>Chế độ demo:</strong> Nút bên dưới mô phỏng thanh toán thành công (tương đương callback từ VNPay/MoMo sau khi tích hợp thật).
+                    <i class="fas fa-info-circle me-1"></i>
+                    <strong>Chế độ demo:</strong> Quét mã QR hoặc dùng nút bên dưới để mô phỏng thanh toán thành công.
                 </div>
                 <form method="POST">
                     <button type="submit" name="xac_nhan_thanh_toan_demo" class="btn btn-success w-100 py-3 fw-semibold">

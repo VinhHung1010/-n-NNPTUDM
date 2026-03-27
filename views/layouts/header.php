@@ -150,7 +150,7 @@ $nguoi_dung = $auth->layThongTinNguoiDung();
                             </a>
                             <ul class="dropdown-menu">
                                 <?php if (($nguoi_dung['vai_tro'] ?? '') === 'quan_tri'): ?>
-                                <li><a class="dropdown-item" href="<?php echo VIEWS_URL; ?>/admin/index.php">
+                                <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/admin/index.php">
                                     <i class="fas fa-shield-halved me-2"></i>Trang quản trị
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>

@@ -8,7 +8,7 @@ $auth = new Auth();
 // Nếu đã đăng nhập thì chuyển về đúng khu vực
 if ($auth->kiemTraDangNhap()) {
     if ($auth->laQuanTri()) {
-        header('Location: ' . VIEWS_URL . '/admin/index.php');
+        header('Location: ' . SITE_URL . '/admin/index.php');
     } else {
         header('Location: ' . SITE_URL . '/index.php');
     }
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $auth->dangNhap($email, $mat_khau);
         if ($result['success']) {
             if (($result['user']['vai_tro'] ?? '') === 'quan_tri') {
-                header('Location: ' . VIEWS_URL . '/admin/index.php');
+                header('Location: ' . SITE_URL . '/admin/index.php');
             } else {
                 header('Location: ' . SITE_URL . '/index.php');
             }

@@ -1,14 +1,14 @@
 <?php
 $page_title = 'Bảng điều khiển';
 require_once __DIR__ . '/bootstrap.php';
-require_once dirname(__DIR__, 2) . '/config/database.php';
+require_once dirname(__DIR__) . '/config/database.php';
 
 $db = Database::getInstance()->getConnection();
 
 $so_nguoi_dung = (int) $db->query("SELECT COUNT(*) AS c FROM nguoi_dung")->fetch_assoc()['c'];
-$so_khoa_hoc = (int) $db->query("SELECT COUNT(*) AS c FROM khoa_hoc")->fetch_assoc()['c'];
-$so_bai_hoc = (int) $db->query("SELECT COUNT(*) AS c FROM bai_hoc")->fetch_assoc()['c'];
-$so_quiz = (int) $db->query("SELECT COUNT(*) AS c FROM quiz")->fetch_assoc()['c'];
+$so_khoa_hoc   = (int) $db->query("SELECT COUNT(*) AS c FROM khoa_hoc")->fetch_assoc()['c'];
+$so_bai_hoc    = (int) $db->query("SELECT COUNT(*) AS c FROM bai_hoc")->fetch_assoc()['c'];
+$so_quiz       = (int) $db->query("SELECT COUNT(*) AS c FROM quiz")->fetch_assoc()['c'];
 
 include __DIR__ . '/partials/layout_start.php';
 ?>
@@ -19,10 +19,10 @@ include __DIR__ . '/partials/layout_start.php';
         <p class="text-muted small mb-0">Tổng quan hệ thống e-learning</p>
     </div>
     <div class="d-flex gap-2">
-        <a href="<?php echo VIEWS_URL; ?>/tai-khoan/doi-mat-khau.php" class="btn btn-outline-secondary btn-sm">
+        <a href="<?php echo SITE_URL; ?>/views/tai-khoan/doi-mat-khau.php" class="btn btn-outline-secondary btn-sm">
             <i class="fas fa-key me-1"></i>Đổi mật khẩu
         </a>
-        <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-xuat.php" class="btn btn-danger btn-sm">
+        <a href="<?php echo SITE_URL; ?>/views/tai-khoan/dang-xuat.php" class="btn btn-danger btn-sm">
             <i class="fas fa-right-from-bracket me-1"></i>Đăng xuất
         </a>
     </div>
@@ -78,7 +78,7 @@ include __DIR__ . '/partials/layout_start.php';
 <div class="card stat-card">
     <div class="card-body">
         <h2 class="h5 mb-3"><i class="fas fa-circle-info me-2 text-primary"></i>Hướng dẫn nhanh</h2>
-        <p class="text-muted mb-2">Đây là khu vực quản trị tách biệt với giao diện học viên. Bạn có thể mở <strong>Khóa học (site)</strong> hoặc <strong>Trang chủ công khai</strong> từ menu bên trái khi cần xem như người dùng thường.</p>
+        <p class="text-muted mb-2">Đây là khu vực quản trị tách biệt với giao diện học viên. Bạn có thể mở <strong>Khóa học</strong> hoặc <strong>Trang chủ công khai</strong> từ menu bên trái khi cần xem như người dùng thường.</p>
         <p class="text-muted mb-0">Các chức năng quản lý chi tiết (duyệt khóa học, người dùng, …) có thể bổ sung dần trên nhánh tính năng tương ứng.</p>
     </div>
 </div>

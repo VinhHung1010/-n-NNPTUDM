@@ -2,7 +2,6 @@
 if (!isset($page_title)) {
     $page_title = 'Quản trị';
 }
-$admin_base = VIEWS_URL . '/admin';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -17,7 +16,6 @@ $admin_base = VIEWS_URL . '/admin';
         :root {
             --admin-sidebar: #1a1d29;
             --admin-sidebar-hover: #252936;
-            --admin-accent: #5b8def;
             --admin-body: #f0f2f5;
         }
         body {
@@ -29,6 +27,13 @@ $admin_base = VIEWS_URL . '/admin';
             background: var(--admin-sidebar);
             min-height: 100vh;
             color: #e8eaed;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 240px;
+            z-index: 1000;
+            overflow-y: auto;
         }
         .admin-sidebar .brand {
             padding: 1.25rem 1rem;
@@ -42,12 +47,16 @@ $admin_base = VIEWS_URL . '/admin';
             border-radius: 8px;
             margin: 0.15rem 0.5rem;
         }
-        .admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
+        .admin-sidebar .nav-link:hover,
+        .admin-sidebar .nav-link.active {
             background: var(--admin-sidebar-hover);
             color: #fff;
         }
         .admin-sidebar .nav-link i { width: 1.35rem; }
-        .admin-main { padding: 1.5rem; }
+        .admin-main {
+            margin-left: 240px;
+            padding: 1.5rem;
+        }
         .admin-topbar {
             background: #fff;
             border-radius: 12px;
@@ -69,31 +78,30 @@ $admin_base = VIEWS_URL . '/admin';
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row g-0">
-        <nav class="col-lg-2 col-md-3 admin-sidebar p-0 d-flex flex-column">
-            <div class="brand">
-                <i class="fas fa-shield-halved me-2 text-primary"></i>Quản trị
-            </div>
-            <ul class="nav flex-column py-2 flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link active" href="<?php echo $admin_base; ?>/index.php">
-                        <i class="fas fa-gauge-high me-2"></i>Tổng quan
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo VIEWS_URL; ?>/khoa-hoc/index.php">
-                        <i class="fas fa-book me-2"></i>Khóa học (site)
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo VIEWS_URL; ?>/home/index.php">
-                        <i class="fas fa-house me-2"></i>Trang chủ công khai
-                    </a>
-                </li>
-            </ul>
-            <div class="p-3 border-top border-secondary border-opacity-25 small text-white-50">
-                <?php echo htmlspecialchars($nguoi_dung_admin['ho_ten'] ?? ''); ?>
-            </div>
-        </nav>
-        <div class="col-lg-10 col-md-9 admin-main">
+    <nav class="admin-sidebar">
+        <div class="brand">
+            <i class="fas fa-shield-halved me-2 text-primary"></i>Quản trị
+        </div>
+        <ul class="nav flex-column py-2">
+            <li class="nav-item">
+                <a class="nav-link active" href="<?php echo SITE_URL; ?>/admin/index.php">
+                    <i class="fas fa-gauge-high me-2"></i>Tổng quan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo SITE_URL; ?>/views/khoa-hoc/index.php">
+                    <i class="fas fa-book me-2"></i>Khóa học
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<?php echo SITE_URL; ?>/views/home/index.php">
+                    <i class="fas fa-house me-2"></i>Trang chủ công khai
+                </a>
+            </li>
+        </ul>
+        <div class="p-3 border-top border-secondary border-opacity-25 small text-white-50 mt-auto">
+            <i class="fas fa-user-circle me-1"></i>
+            <?php echo htmlspecialchars($nguoi_dung_admin['ho_ten'] ?? ''); ?>
+        </div>
+    </nav>
+    <div class="admin-main">

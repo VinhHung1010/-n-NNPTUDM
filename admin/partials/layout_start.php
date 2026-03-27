@@ -114,6 +114,11 @@ if (!isset($page_title)) {
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <?php if (strpos($_SERVER['SCRIPT_NAME'], 'dang-ky') !== false) echo 'active'; ?>" href="<?php echo SITE_URL; ?>/admin/dang-ky/index.php">
+                    <i class="fas fa-user-plus me-2"></i>Đăng ký
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="<?php echo SITE_URL; ?>/views/home/index.php">
                     <i class="fas fa-house me-2"></i>Trang chủ công khai
                 </a>

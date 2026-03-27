@@ -41,7 +41,7 @@ $top_hv = $db->query("
            MAX(kq.diem_so) AS diem_max
     FROM nguoi_dung hv
     LEFT JOIN dang_ky_khoa_hoc dk ON dk.id_hoc_vien = hv.id AND dk.trang_thai = 'da_xac_nhan'
-    LEFT JOIN ket_qua_quiz kq ON kq.id_nguoi_dung = hv.id
+    LEFT JOIN ket_qua_quiz kq ON kq.id_hoc_vien = hv.id
     WHERE hv.vai_tro = 'hoc_vien'
     GROUP BY hv.id, hv.ho_ten, hv.email
     ORDER BY so_quiz_lam DESC, diem_max DESC

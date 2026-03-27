@@ -3,6 +3,7 @@
 
 # Database backup
 *.sql
+!database/schema.sql
 *.bak
 
 # IDE

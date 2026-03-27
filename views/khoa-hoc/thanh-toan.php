@@ -49,22 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['xac_nhan_da_chuyen'])
     $thong_bao_type = 'danger';
 }
 
-// ── Build VietQR URL ──
 $so_tien_hien = number_format((float)$gd['so_tien'], 0, ',', '.');
-$bank_id_bin   = defined('QR_BANK_ID')   ? QR_BANK_ID   : '970403';
 $bank_name     = defined('QR_BANK_NAME') ? QR_BANK_NAME : 'TECHCOMBANK';
 $stk           = defined('QR_STK')         ? QR_STK        : '123456789';
 $chu_tk        = defined('QR_CHU_TK')    ? QR_CHU_TK     : 'NGUYEN VAN A';
-
-$qr_url = sprintf(
-    'https://img.vietqr.io/image/%s-%s.jpg?amount=%d&addInfo=%s&accountName=%s',
-    $bank_id_bin,
-    rawurlencode($stk),
-    (int)$gd['so_tien'],
-    rawurlencode($ma),
-    rawurlencode($chu_tk)
-);
-
 $qr_co_dinh_url = defined('QR_CO_DINH_URL') ? QR_CO_DINH_URL : '';
 
 include __DIR__ . '/../../views/layouts/header.php';
@@ -186,42 +174,26 @@ include __DIR__ . '/../../views/layouts/header.php';
                 </div>
                 <div>
                     <div class="fw-bold" style="color:var(--primary)"><?php echo htmlspecialchars($bank_name); ?></div>
-                    <div class="small text-muted">Thanh toán qua VietQR</div>
+                    <div class="small text-muted">Chuyển khoản ngân hàng</div>
                 </div>
             </div>
 
-            <!-- Mã QR thanh toán: cố định + VietQR -->
-            <div class="row g-4 justify-content-center mb-3">
+            <!-- Mã QR thanh toán (ảnh cố định) -->
+            <div class="text-center mb-3">
                 <?php if ($qr_co_dinh_url !== ''): ?>
-                <div class="col-sm-6 text-center">
                     <p class="small fw-semibold text-muted mb-2">
                         <i class="fas fa-qrcode me-1"></i>Mã QR thanh toán
                     </p>
                     <img src="<?php echo htmlspecialchars($qr_co_dinh_url); ?>"
                          alt="Mã QR thanh toán"
                          class="rounded qr-pay-img">
-                </div>
+                <?php else: ?>
+                    <p class="small text-warning mb-0">Chưa cấu hình ảnh mã QR (QR_CO_DINH_URL).</p>
                 <?php endif; ?>
-                <div class="col-sm-6 text-center">
-                    <p class="small fw-semibold text-muted mb-2">
-                        <i class="fas fa-university me-1"></i>VietQR (số tiền &amp; mã đơn)
-                    </p>
-                    <img src="<?php echo htmlspecialchars($qr_url); ?>"
-                         alt="Mã QR VietQR chuyển khoản"
-                         class="rounded qr-pay-img"
-                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                    <div style="display:none;width:200px;height:200px;margin:0 auto;border:3px solid #e0e0e0;border-radius:8px;align-items:center;justify-content:center;flex-direction:column;color:#aaa;font-size:.85rem"
-                         class="rounded">
-                        <i class="fas fa-qrcode fa-3x mb-2"></i>
-                        Không tải được VietQR
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mb-3">
-                <div class="mt-1">
+                <div class="mt-3">
                     <span class="qr-amount-tag"><?php echo $so_tien_hien; ?>đ</span>
                 </div>
-                <p class="small text-muted mt-2 mb-0">Quét một trong hai mã bằng app ngân hàng / ví, hoặc chuyển khoản thủ công bên dưới.</p>
+                <p class="small text-muted mt-2 mb-0">Quét mã bằng app ngân hàng / ví, hoặc chuyển khoản thủ công bên dưới.</p>
             </div>
 
             <!-- Thông tin tài khoản -->

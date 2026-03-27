@@ -34,6 +34,14 @@ include __DIR__ . '/../../views/layouts/header.php';
 
 <div class="container mt-4">
 
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/index.php">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="<?php echo VIEWS_URL; ?>/home/index.php">Tiến độ</a></li>
+            <li class="breadcrumb-item active">Kết quả Quiz</li>
+        </ol>
+    </nav>
+
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
         <div>
             <h2 class="fw-bold mb-1">

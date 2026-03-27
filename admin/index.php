@@ -6,9 +6,11 @@ require_once dirname(__DIR__) . '/config/database.php';
 $db = Database::getInstance()->getConnection();
 
 $so_nguoi_dung = (int) $db->query("SELECT COUNT(*) AS c FROM nguoi_dung")->fetch_assoc()['c'];
-$so_khoa_hoc   = (int) $db->query("SELECT COUNT(*) AS c FROM khoa_hoc")->fetch_assoc()['c'];
+$so_khoa_hoc   = (int) $db->query("SELECT COUNT(*) AS c FROM khoa_hoc WHERE trang_thai = 'da_duyet'")->fetch_assoc()['c'];
 $so_bai_hoc    = (int) $db->query("SELECT COUNT(*) AS c FROM bai_hoc")->fetch_assoc()['c'];
 $so_quiz       = (int) $db->query("SELECT COUNT(*) AS c FROM quiz")->fetch_assoc()['c'];
+$so_dang_ky    = (int) $db->query("SELECT COUNT(*) AS c FROM dang_ky_khoa_hoc")->fetch_assoc()['c'];
+$cho_xu_ly     = (int) $db->query("SELECT COUNT(*) AS c FROM dang_ky_khoa_hoc WHERE trang_thai = 'cho_xu_ly'")->fetch_assoc()['c'];
 
 include __DIR__ . '/partials/layout_start.php';
 ?>
@@ -73,6 +75,26 @@ include __DIR__ . '/partials/layout_start.php';
             </div>
         </div>
     </div>
+    <div class="col-sm-6 col-xl-3">
+        <a href="<?php echo SITE_URL; ?>/admin/dang-ky/index.php" class="text-decoration-none">
+            <div class="card stat-card h-100 <?php if ($cho_xu_ly > 0) echo 'border-warning'; ?>">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="icon bg-<?php echo $cho_xu_ly > 0 ? 'warning' : 'secondary'; ?> bg-opacity-10 text-<?php echo $cho_xu_ly > 0 ? 'warning' : 'secondary'; ?>">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Đăng ký</div>
+                        <div class="fs-4 fw-semibold">
+                            <?php echo $so_dang_ky; ?>
+                            <?php if ($cho_xu_ly > 0): ?>
+                                <span class="badge bg-warning text-dark ms-1" style="font-size:0.65rem"><?php echo $cho_xu_ly; ?> chờ</span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
 
 <div class="row g-3">
@@ -136,6 +158,19 @@ include __DIR__ . '/partials/layout_start.php';
                     <div>
                         <div class="text-muted small">Quản lý</div>
                         <div class="fw-semibold text-dark">Quiz</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <a href="<?php echo SITE_URL; ?>/admin/dang-ky/index.php" class="text-decoration-none">
+            <div class="card stat-card h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="icon bg-success bg-opacity-10 text-success"><i class="fas fa-user-plus"></i></div>
+                    <div>
+                        <div class="text-muted small">Quản lý</div>
+                        <div class="fw-semibold text-dark">Đăng ký</div>
                     </div>
                 </div>
             </div>

@@ -100,6 +100,14 @@ class Auth {
         return ($u['vai_tro'] ?? '') === 'quan_tri';
     }
 
+    public function laGiaoVien() {
+        if (!$this->kiemTraDangNhap()) {
+            return false;
+        }
+        $u = $this->layThongTinNguoiDung();
+        return ($u['vai_tro'] ?? '') === 'giao_vien';
+    }
+
     public function layNguoiDungTheoId($id) {
         $stmt = $this->db->prepare("SELECT * FROM nguoi_dung WHERE id = ?");
         $stmt->bind_param("i", $id);

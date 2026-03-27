@@ -393,6 +393,12 @@ function isActive($pattern, $path = null) {
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
                             <?php endif; ?>
+                            <?php if (($nguoi_dung['vai_tro'] ?? '') === 'giao_vien'): ?>
+                                <li><a class="dropdown-item" href="<?php echo SITE_URL; ?>/teacher/index.php">
+                                    <i class="fas fa-chalkboard-teacher me-2 text-success"></i>Khu vực giảng viên
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            <?php endif; ?>
                             <li><a class="dropdown-item" href="<?php echo VIEWS_URL; ?>/chung-chi/xem.php">
                                 <i class="fas fa-award me-2 text-warning"></i>Chứng chỉ của tôi
                             </a></li>

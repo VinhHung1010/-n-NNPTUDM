@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../models/bai_hoc.php';
 require_once __DIR__ . '/../../models/khoa_hoc.php';
 require_once __DIR__ . '/../../models/tien_do.php';
 require_once __DIR__ . '/../../models/chung_chi.php';
+require_once __DIR__ . '/../../models/binh_luan.php';
 
 $page_title = 'Chi tiết Bài học - ' . SITE_NAME;
 $auth = new Auth();
@@ -12,6 +13,7 @@ $bai_hoc_model = new BaiHoc();
 $khoa_hoc_model = new KhoaHoc();
 $td_model = new TienDo();
 $cc_model = new ChungChi();
+$bl_model = new BinhLuan();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -263,6 +265,128 @@ include __DIR__ . '/../../views/layouts/header.php';
                     </div>
                 </div>
             <?php endif; ?>
+
+            <!-- Bình luận bài học -->
+            <div class="card mt-4" style="border-radius:16px" id="binh-luan-section">
+                <div class="card-header bg-white fw-bold py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-comments me-2" style="color:var(--primary)"></i>
+                            Bình luận bài học
+                            <?php
+                            $so_binh_luan = $bl_model->demBinhLuan($id);
+                            if ($so_binh_luan > 0): ?>
+                                <span class="badge bg-primary rounded-pill"><?php echo $so_binh_luan; ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="loadBinhLuan(<?php echo $id; ?>)">
+                            <i class="fas fa-rotate-right me-1"></i>Làm mới
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <?php if ($nguoi_dung): ?>
+                        <!-- Form thêm bình luận -->
+                        <form id="form-binh-luan" class="mb-4">
+                            <input type="hidden" id="comment-id" value="">
+                            <input type="hidden" id="bai-hoc-id" value="<?php echo $id; ?>">
+                            <div class="mb-2">
+                                <textarea id="comment-content" class="form-control" rows="3" 
+                                    placeholder="Viết bình luận của bạn..." required></textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-comment">
+                                    <i class="fas fa-paper-plane me-1"></i>Gửi bình luận
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-edit" 
+                                    style="display:none" onclick="cancelEdit()">
+                                    <i class="fas fa-times me-1"></i>Hủy
+                                </button>
+                            </div>
+                        </form>
+                    <?php else: ?>
+                        <div class="alert alert-info mb-4 py-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Vui lòng <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php" class="alert-link">đăng nhập</a> 
+                            để tham gia bình luận.
+                        </div>
+                    <?php endif; ?>
+
+                    <!-- Danh sách bình luận -->
+                    <div id="danh-sach-binh-luan">
+                        <?php
+                        $binh_luan_list = $bl_model->layTheoBaiHoc($id);
+                        if (empty($binh_luan_list)): ?>
+                            <div class="text-center text-muted py-4" id="no-comments">
+                                <i class="fas fa-comment-dots fa-2x mb-2 opacity-25"></i>
+                                <p class="mb-0">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="list-group list-group-flush">
+                                <?php foreach ($binh_luan_list as $bl): ?>
+                                    <div class="list-group-item px-0 py-3 border-0 border-bottom" id="comment-<?php echo $bl['id']; ?>">
+                                        <div class="d-flex gap-3">
+                                            <div class="flex-shrink-0">
+                                                <?php if (!empty($bl['anh_dai_dien'])): ?>
+                                                    <img src="<?php echo htmlspecialchars($bl['anh_dai_dien']); ?>" 
+                                                         class="rounded-circle" width="42" height="42" alt="Avatar">
+                                                <?php else: ?>
+                                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" 
+                                                         style="width:42px;height:42px;font-weight:700;font-size:1rem">
+                                                        <?php echo mb_substr($bl['ho_ten'], 0, 1, 'UTF-8'); ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-1">
+                                                    <div>
+                                                        <span class="fw-semibold"><?php echo htmlspecialchars($bl['ho_ten']); ?></span>
+                                                        <?php if ($bl['vai_tro'] === 'quan_tri'): ?>
+                                                            <span class="badge bg-danger ms-1" style="font-size:0.65rem">Quản trị</span>
+                                                        <?php elseif ($bl['vai_tro'] === 'giao_vien'): ?>
+                                                            <span class="badge bg-success ms-1" style="font-size:0.65rem">Giáo viên</span>
+                                                        <?php endif; ?>
+                                                        <span class="text-muted ms-2" style="font-size:0.8rem">
+                                                            <i class="fas fa-clock me-1"></i><?php echo date('d/m/Y H:i', strtotime($bl['ngay_tao'])); ?>
+                                                        </span>
+                                                    </div>
+                                                    <?php if ($nguoi_dung && ($nguoi_dung['id'] == $bl['id_nguoi_dung'] || $nguoi_dung['vai_tro'] === 'quan_tri')): ?>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light rounded-circle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <?php if ($nguoi_dung['id'] == $bl['id_nguoi_dung']): ?>
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="javascript:void(0)" 
+                                                                           onclick="editComment(<?php echo $bl['id']; ?>, '<?php echo htmlspecialchars(addslashes($bl['noi_dung'])); ?>')">
+                                                                            <i class="fas fa-edit me-2 text-primary"></i>Sửa
+                                                                        </a>
+                                                                    </li>
+                                                                <?php endif; ?>
+                                                                <li>
+                                                                    <a class="dropdown-item text-danger" href="javascript:void(0)" 
+                                                                       onclick="deleteComment(<?php echo $bl['id']; ?>)">
+                                                                        <i class="fas fa-trash me-2"></i>Xóa
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <p class="mb-0 mt-1 text-secondary" style="font-size:0.95rem;line-height:1.6">
+                                                    <?php echo nl2br(htmlspecialchars($bl['noi_dung'])); ?>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Sidebar -->
@@ -367,3 +491,116 @@ include __DIR__ . '/../../views/layouts/header.php';
 </div>
 
 <?php include __DIR__ . '/../../views/layouts/footer.php'; ?>
+
+<!-- JavaScript xử lý bình luận -->
+<script>
+// Thêm bình luận
+document.getElementById('form-binh-luan')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const commentId = document.getElementById('comment-id').value;
+    const baiHocId = document.getElementById('bai-hoc-id').value;
+    const noiDung = document.getElementById('comment-content').value.trim();
+    
+    if (!noiDung) {
+        alert('Vui lòng nhập nội dung bình luận!');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('bai_hoc_id', baiHocId);
+    formData.append('noi_dung', noiDung);
+    
+    let url = '<?php echo SITE_URL; ?>/api/binh-luan/them.php';
+    let method = 'POST';
+    
+    if (commentId) {
+        formData.append('id', commentId);
+        url = '<?php echo SITE_URL; ?>/api/binh-luan/sua.php';
+    }
+    
+    fetch(url, {
+        method: method,
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('comment-content').value = '';
+            document.getElementById('comment-id').value = '';
+            document.getElementById('btn-submit-comment').innerHTML = '<i class="fas fa-paper-plane me-1"></i>Gửi bình luận';
+            document.getElementById('btn-cancel-edit').style.display = 'none';
+            loadBinhLuan(baiHocId);
+        } else {
+            alert(data.message || 'Có lỗi xảy ra!');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi gửi bình luận!');
+    });
+});
+
+// Tải lại danh sách bình luận
+function loadBinhLuan(baiHocId) {
+    fetch('<?php echo SITE_URL; ?>/api/binh-luan/lay-theo-bai-hoc.php?id=' + baiHocId)
+    .then(response => response.text())
+    .then(html => {
+        document.getElementById('danh-sach-binh-luan').innerHTML = html;
+        // Cập nhật số lượng bình luận trong tiêu đề
+        const comments = document.querySelectorAll('#danh-sach-binh-luan .list-group-item');
+        const badge = document.querySelector('#binh-luan-section .badge.bg-primary');
+        if (badge) {
+            badge.textContent = comments.length;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Chỉnh sửa bình luận
+function editComment(id, noiDung) {
+    document.getElementById('comment-id').value = id;
+    document.getElementById('comment-content').value = noiDung;
+    document.getElementById('comment-content').focus();
+    document.getElementById('btn-submit-comment').innerHTML = '<i class="fas fa-save me-1"></i>Cập nhật';
+    document.getElementById('btn-cancel-edit').style.display = 'inline-block';
+    
+    // Scroll to form
+    document.getElementById('form-binh-luan').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Hủy chỉnh sửa
+function cancelEdit() {
+    document.getElementById('comment-id').value = '';
+    document.getElementById('comment-content').value = '';
+    document.getElementById('btn-submit-comment').innerHTML = '<i class="fas fa-paper-plane me-1"></i>Gửi bình luận';
+    document.getElementById('btn-cancel-edit').style.display = 'none';
+}
+
+// Xóa bình luận
+function deleteComment(id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa bình luận này?')) {
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('id', id);
+    
+    fetch('<?php echo SITE_URL; ?>/api/binh-luan/xoa.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadBinhLuan(document.getElementById('bai-hoc-id').value);
+        } else {
+            alert(data.message || 'Có lỗi xảy ra!');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra khi xóa bình luận!');
+    });
+}
+</script>

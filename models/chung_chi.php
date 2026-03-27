@@ -6,6 +6,39 @@ class ChungChi {
 
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
+        // 若本地库未执行 schema 升级，自动创建 certificates 表，避免页面致命错误
+        $this->damBaoBangTonTai();
+    }
+
+    /**
+     * 确保 certificates 表存在（与 database/schema.sql 结构一致）
+     */
+    private function damBaoBangTonTai() {
+        static $daKiemTra = false;
+        if ($daKiemTra) {
+            return;
+        }
+        $daKiemTra = true;
+
+        $res = $this->db->query("SHOW TABLES LIKE 'certificates'");
+        if ($res && $res->num_rows > 0) {
+            return;
+        }
+
+        $sql = "CREATE TABLE IF NOT EXISTS certificates (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            id_hoc_vien INT NOT NULL,
+            id_khoa_hoc INT NOT NULL,
+            ma_chung_chi VARCHAR(50) UNIQUE NOT NULL,
+            ngay_cap TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (id_hoc_vien) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+            FOREIGN KEY (id_khoa_hoc) REFERENCES khoa_hoc(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_cert (id_hoc_vien, id_khoa_hoc)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+
+        if (!$this->db->query($sql)) {
+            trigger_error('Không thể tạo bảng certificates: ' . $this->db->error, E_USER_WARNING);
+        }
     }
 
     /**

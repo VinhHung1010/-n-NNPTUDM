@@ -201,5 +201,39 @@ class KhoaHoc {
         $stmt->bind_param("ii", $hoc_vien_id, $khoa_hoc_id);
         return $stmt->execute();
     }
+
+    /** Đăng ký lại sau khi bị hủy (khóa miễn phí — tránh lỗi UNIQUE khi INSERT lại) */
+    public function dangKyLaiSauKhiHuy($hoc_vien_id, $khoa_hoc_id) {
+        $stmt = $this->db->prepare("
+            UPDATE dang_ky_khoa_hoc SET trang_thai = 'cho_xu_ly', ngay_dang_ky = CURRENT_TIMESTAMP
+            WHERE id_hoc_vien = ? AND id_khoa_hoc = ? AND trang_thai = 'da_huy'
+        ");
+        $stmt->bind_param("ii", $hoc_vien_id, $khoa_hoc_id);
+        return $stmt->execute() && $stmt->affected_rows > 0;
+    }
+
+    /**
+     * Sau thanh toán thành công: đăng ký đã xác nhận hoặc nâng từ chờ duyệt lên đã xác nhận
+     */
+    public function xacNhanDangKySauThanhToan($hoc_vien_id, $khoa_hoc_id) {
+        $tt = $this->daDangKy($hoc_vien_id, $khoa_hoc_id);
+        if ($tt === 'da_xac_nhan') {
+            return true;
+        }
+        if ($tt !== null) {
+            $stmt = $this->db->prepare("
+                UPDATE dang_ky_khoa_hoc SET trang_thai = 'da_xac_nhan'
+                WHERE id_hoc_vien = ? AND id_khoa_hoc = ?
+            ");
+            $stmt->bind_param("ii", $hoc_vien_id, $khoa_hoc_id);
+            return $stmt->execute();
+        }
+        $stmt = $this->db->prepare("
+            INSERT INTO dang_ky_khoa_hoc (id_hoc_vien, id_khoa_hoc, trang_thai)
+            VALUES (?, ?, 'da_xac_nhan')
+        ");
+        $stmt->bind_param("ii", $hoc_vien_id, $khoa_hoc_id);
+        return $stmt->execute();
+    }
 }
 ?>

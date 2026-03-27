@@ -130,6 +130,9 @@ class Auth {
 
     public function doiMatKhau($id, $mat_khau_cu, $mat_khau_moi) {
         $user = $this->layNguoiDungTheoId($id);
+        if (!$user) {
+            return ['success' => false, 'message' => 'Không tìm thấy tài khoản!'];
+        }
 
         if (!password_verify($mat_khau_cu, $user['mat_khau'])) {
             return ['success' => false, 'message' => 'Mật khẩu cũ không đúng!'];

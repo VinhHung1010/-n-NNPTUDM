@@ -20,6 +20,17 @@ if ($id <= 0) { header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php'); exit; 
 $quiz = $quiz_model->layTheoId($id);
 if (!$quiz) { header('Location: ' . VIEWS_URL . '/khoa-hoc/index.php'); exit; }
 
+// Kiểm tra đăng ký khóa học trước khi cho làm
+$kh_model = new KhoaHoc();
+$nguoi_dung = $auth->layThongTinNguoiDung();
+$trang_thai_dk = $nguoi_dung
+    ? $kh_model->daDangKy($nguoi_dung['id'], $quiz['id_khoa_hoc'] ?? 0)
+    : null;
+if ($trang_thai_dk !== 'da_xac_nhan') {
+    header('Location: ' . VIEWS_URL . '/bai-hoc/chi-tiet.php?id=' . ($quiz['id_bai_hoc'] ?? 0));
+    exit;
+}
+
 $cau_hoi = $quiz_model->layCauHoiChiTiet($id);
 
 // Xáo trộn đáp án

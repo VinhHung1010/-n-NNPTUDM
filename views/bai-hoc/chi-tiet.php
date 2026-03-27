@@ -25,6 +25,14 @@ if (!$bai_hoc) {
 
 $khoa_hoc = $khoa_hoc_model->layTheoId($bai_hoc['id_khoa_hoc']);
 $bai_hoc_list = $bai_hoc_model->layTheoKhoaHoc($bai_hoc['id_khoa_hoc']);
+$tong_thoi_luong = $bai_hoc_model->tinhTongThoiLuong($bai_hoc['id_khoa_hoc']);
+
+// Kiểm tra đăng ký
+$nguoi_dung = $auth->layThongTinNguoiDung();
+$trang_thai_dk = $nguoi_dung
+    ? $khoa_hoc_model->daDangKy($nguoi_dung['id'], $bai_hoc['id_khoa_hoc'])
+    : null;
+$da_xac_nhan = $trang_thai_dk === 'da_xac_nhan';
 
 // Tìm bài học trước và sau
 $current_index = array_search($id, array_column($bai_hoc_list, 'id'));
@@ -35,98 +43,122 @@ include __DIR__ . '/../../views/layouts/header.php';
 ?>
 
 <div class="container mt-4">
+
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?php echo SITE_URL; ?>/index.php">Trang chủ</a></li>
             <li class="breadcrumb-item"><a href="<?php echo VIEWS_URL; ?>/khoa-hoc/index.php">Khóa học</a></li>
-            <li class="breadcrumb-item"><a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>"><?php echo $khoa_hoc['ten_khoa_hoc']; ?></a></li>
-            <li class="breadcrumb-item active"><?php echo $bai_hoc['tieu_de']; ?></li>
+            <li class="breadcrumb-item"><a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>"><?php echo htmlspecialchars($khoa_hoc['ten_khoa_hoc']); ?></a></li>
+            <li class="breadcrumb-item active"><?php echo htmlspecialchars($bai_hoc['tieu_de']); ?></li>
         </ol>
     </nav>
 
-    <div class="row">
+    <?php if (!$da_xac_nhan && $nguoi_dung): ?>
+        <div class="alert alert-warning mb-3">
+            <i class="fas fa-lock me-1"></i>
+            Bạn chưa được xác nhận đăng ký khóa học này.
+            <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>" class="alert-link">
+                Xem chi tiết khóa học
+            </a>
+        </div>
+    <?php endif; ?>
+
+    <div class="row g-4">
+
         <!-- Nội dung bài học -->
         <div class="col-lg-8">
-            <div class="card shadow mb-4">
-                <div class="card-header bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0"><i class="fas fa-book-open me-2"></i><?php echo $bai_hoc['tieu_de']; ?></h4>
-                        <span class="badge bg-light text-dark">
+            <!-- Video -->
+            <?php if (!empty($bai_hoc['video_url'])): ?>
+                <div class="card mb-4 overflow-hidden" style="border-radius:16px">
+                    <div class="card-header bg-white fw-bold">
+                        <i class="fas fa-video me-2" style="color:var(--primary)"></i>Video bài học
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="<?php echo $bai_hoc['video_url']; ?>"
+                                    title="Video bài học" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Nội dung -->
+            <div class="card mb-4" style="border-radius:16px">
+                <div class="card-header bg-white fw-bold py-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <i class="fas fa-book-open me-2" style="color:var(--primary)"></i>
+                            <?php echo htmlspecialchars($bai_hoc['tieu_de']); ?>
+                        </div>
+                        <span class="badge bg-light text-muted py-2 px-3">
                             <i class="fas fa-clock me-1"></i><?php echo $bai_hoc['thoi_luong_phut']; ?> phút
                         </span>
                     </div>
                 </div>
                 <div class="card-body">
-                    <!-- Video nếu có -->
-                    <?php if (!empty($bai_hoc['video_url'])): ?>
-                        <div class="mb-4">
-                            <div class="ratio ratio-16x9">
-                                <iframe src="<?php echo $bai_hoc['video_url']; ?>" 
-                                        title="Video bài học" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- Nội dung bài học -->
-                    <div class="lesson-content">
-                        <?php echo nl2br($bai_hoc['noi_dung'] ?? 'Chưa có nội dung bài học.'); ?>
+                    <div class="lesson-content" style="white-space:pre-line;font-size:1.05rem;line-height:1.8">
+                        <?php echo nl2br(htmlspecialchars($bai_hoc['noi_dung'] ?? 'Chưa có nội dung bài học.')); ?>
                     </div>
 
                     <!-- Nút điều hướng -->
-                    <div class="d-flex justify-content-between mt-4 pt-4 border-top">
+                    <div class="d-flex justify-content-between mt-4 pt-4 border-top flex-wrap gap-2">
                         <?php if ($prev_lesson): ?>
-                            <a href="chi-tiet.php?id=<?php echo $prev_lesson['id']; ?>" class="btn btn-outline-primary">
-                                <i class="fas fa-chevron-left me-2"></i><?php echo $prev_lesson['tieu_de']; ?>
+                            <a href="chi-tiet.php?id=<?php echo $prev_lesson['id']; ?>" class="btn btn-outline-secondary">
+                                <i class="fas fa-chevron-left me-1"></i><?php echo htmlspecialchars($prev_lesson['tieu_de']); ?>
                             </a>
                         <?php else: ?>
                             <div></div>
                         <?php endif; ?>
-                        
+
                         <?php if ($next_lesson): ?>
                             <a href="chi-tiet.php?id=<?php echo $next_lesson['id']; ?>" class="btn btn-primary">
-                                <?php echo $next_lesson['tieu_de']; ?><i class="fas fa-chevron-right ms-2"></i>
+                                <?php echo htmlspecialchars($next_lesson['tieu_de']); ?><i class="fas fa-chevron-right ms-1"></i>
                             </a>
                         <?php else: ?>
                             <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>" class="btn btn-success">
-                                <i class="fas fa-check-circle me-2"></i>Hoàn thành khóa học
+                                <i class="fas fa-check-circle me-1"></i>Hoàn thành khóa học
                             </a>
                         <?php endif; ?>
                     </div>
                 </div>
             </div>
 
-            <!-- Quiz của bài học -->
-            <?php 
+            <!-- Quiz -->
+            <?php
             require_once __DIR__ . '/../../models/quiz.php';
             $quiz_model = new Quiz();
             $quiz_list = $quiz_model->layTheoBaiHoc($id);
             ?>
-            
+
             <?php if (!empty($quiz_list)): ?>
-                <div class="card shadow">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="fas fa-question-circle me-2"></i>Bài Quiz kiểm tra</h5>
+                <div class="card" style="border-radius:16px">
+                    <div class="card-header bg-success text-white fw-bold py-3">
+                        <i class="fas fa-circle-question me-2"></i>Bài Quiz kiểm tra
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <?php foreach ($quiz_list as $quiz): ?>
-                            <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between align-items-center p-3 <?php echo next($quiz_list) ? 'border-bottom' : ''; ?>">
                                 <div>
-                                    <h6 class="mb-1"><?php echo $quiz['tieu_de']; ?></h6>
+                                    <h6 class="mb-1"><?php echo htmlspecialchars($quiz['tieu_de']); ?></h6>
                                     <small class="text-muted">
-                                        <i class="fas fa-clock me-1"></i><?php echo $quiz['thoi_gian_phut']; ?> phút
-                                        <i class="fas fa-star ms-2 me-1"></i><?php echo $quiz['diem_toi_da']; ?> điểm
+                                        <i class="fas fa-clock me-1"></i><?php echo $quiz['thoi_gian_phut']; ?> phút ·
+                                        <i class="fas fa-star me-1"></i><?php echo $quiz['diem_toi_da']; ?> điểm
                                     </small>
                                 </div>
-                                <?php if ($auth->kiemTraDangNhap()): ?>
-                                    <a href="<?php echo VIEWS_URL; ?>/quiz/lam-bai.php?id=<?php echo $quiz['id']; ?>" 
-                                       class="btn btn-success">
-                                        <i class="fas fa-play me-2"></i>Làm bài
+                                <?php if ($da_xac_nhan): ?>
+                                    <a href="<?php echo VIEWS_URL; ?>/quiz/lam-bai.php?id=<?php echo $quiz['id']; ?>"
+                                       class="btn btn-success btn-sm">
+                                        <i class="fas fa-play me-1"></i>Làm bài
                                     </a>
+                                <?php elseif ($nguoi_dung): ?>
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-lock me-1"></i>Chưa được duyệt
+                                    </span>
                                 <?php else: ?>
-                                    <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php" 
-                                       class="btn btn-outline-success">
-                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để làm
+                                    <a href="<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php"
+                                       class="btn btn-outline-success btn-sm">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
                                     </a>
                                 <?php endif; ?>
                             </div>
@@ -136,25 +168,52 @@ include __DIR__ . '/../../views/layouts/header.php';
             <?php endif; ?>
         </div>
 
-        <!-- Sidebar - Danh sách bài học -->
+        <!-- Sidebar -->
         <div class="col-lg-4">
-            <div class="card shadow sticky-top" style="top: 20px;">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>Danh sách bài học
-                    </h5>
+            <!-- Thông tin khóa học -->
+            <div class="card mb-3" style="border-radius:16px">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fas fa-book me-1" style="color:var(--primary)"></i>
+                        <?php echo htmlspecialchars($khoa_hoc['ten_khoa_hoc']); ?>
+                    </h6>
+                    <div class="small text-muted mb-2">
+                        <i class="fas fa-user-tie me-1"></i>
+                        <?php echo htmlspecialchars($khoa_hoc['ten_giao_vien'] ?? 'N/A'); ?>
+                    </div>
+                    <div class="small text-muted mb-2">
+                        <i class="fas fa-file-lines me-1"></i>
+                        <?php echo count($bai_hoc_list); ?> bài học ·
+                        <?php echo $tong_thoi_luong; ?> phút
+                    </div>
+                    <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>"
+                       class="btn btn-outline-secondary btn-sm w-100 mt-2">
+                        <i class="fas fa-arrow-left me-1"></i>Quay về khóa học
+                    </a>
+                </div>
+            </div>
+
+            <!-- Danh sách bài học -->
+            <div class="card" style="border-radius:16px">
+                <div class="card-header bg-white fw-bold py-3">
+                    <i class="fas fa-list me-2" style="color:var(--primary)"></i>
+                    Danh sách bài học
                 </div>
                 <div class="card-body p-0">
                     <div class="list-group list-group-flush">
-                        <?php foreach ($bai_hoc_list as $index => $bh): ?>
-                            <a href="chi-tiet.php?id=<?php echo $bh['id']; ?>" 
-                               class="list-group-item list-group-item-action <?php echo ($bh['id'] == $id) ? 'active' : ''; ?>">
+                        <?php foreach ($bai_hoc_list as $i => $bh): ?>
+                            <?php $hien_tai = (int)$bh['id'] === (int)$id; ?>
+                            <a href="chi-tiet.php?id=<?php echo $bh['id']; ?>"
+                               class="list-group-item list-group-item-action <?php echo $hien_tai ? 'active' : ''; ?>">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="badge bg-secondary me-2"><?php echo $index + 1; ?></span>
-                                        <strong><?php echo $bh['tieu_de']; ?></strong>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge rounded-circle <?php echo $hien_tai ? 'bg-light text-dark' : 'bg-secondary'; ?>"
+                                              style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700">
+                                            <?php echo $i + 1; ?>
+                                        </span>
+                                        <span class="small fw-semibold"><?php echo htmlspecialchars($bh['tieu_de']); ?></span>
                                     </div>
-                                    <small>
+                                    <small class="<?php echo $hien_tai ? 'text-dark' : 'text-muted'; ?>">
                                         <i class="fas fa-clock me-1"></i><?php echo $bh['thoi_luong_phut']; ?>p
                                     </small>
                                 </div>
@@ -162,14 +221,9 @@ include __DIR__ . '/../../views/layouts/header.php';
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <a href="<?php echo VIEWS_URL; ?>/khoa-hoc/chi-tiet.php?id=<?php echo $khoa_hoc['id']; ?>" 
-                       class="btn btn-outline-secondary w-100 btn-sm">
-                        <i class="fas fa-arrow-left me-2"></i>Quay về khóa học
-                    </a>
-                </div>
             </div>
         </div>
+
     </div>
 </div>
 

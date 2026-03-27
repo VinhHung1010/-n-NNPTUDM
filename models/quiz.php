@@ -155,15 +155,17 @@ class Quiz {
         $so_cau_dung = 0;
         $tong_cau = count($cau_hoi);
 
-        foreach ($cau_hoi as $ch) {
-            $dap_an_dung = $this->db->query("SELECT id FROM dap_an WHERE id_cau_hoi = {$ch['id']} AND la_dap_an_dung = 1")->fetch_assoc();
-            
-            if (isset($dap_an_chon[$ch['id']]) && $dap_an_chon[$ch['id']] == $dap_an_dung['id']) {
-                $so_cau_dung++;
-            }
-        }
+        if ($tong_cau > 0) {
+            foreach ($cau_hoi as $ch) {
+                $dap_an_dung = $this->db->query("SELECT id FROM dap_an WHERE id_cau_hoi = {$ch['id']} AND la_dap_an_dung = 1")->fetch_assoc();
 
-        $diem = round(($so_cau_dung / $tong_cau) * $quiz['diem_toi_da']);
+                if (isset($dap_an_chon[$ch['id']]) && $dap_an_dung && $dap_an_chon[$ch['id']] == $dap_an_dung['id']) {
+                    $so_cau_dung++;
+                }
+            }
+
+            $diem = round(($so_cau_dung / $tong_cau) * $quiz['diem_toi_da']);
+        }
 
         // Lưu kết quả
         $stmt = $this->db->prepare("INSERT INTO ket_qua_quiz (id_hoc_vien, id_quiz, diem_so, so_cau_dung, thoi_gian_lam_bai) 

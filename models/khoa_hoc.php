@@ -169,12 +169,13 @@ class KhoaHoc {
 
     public function daDangKy($hoc_vien_id, $khoa_hoc_id) {
         $stmt = $this->db->prepare("
-            SELECT COUNT(*) AS c FROM dang_ky_khoa_hoc
+            SELECT trang_thai FROM dang_ky_khoa_hoc
             WHERE id_hoc_vien = ? AND id_khoa_hoc = ?
         ");
         $stmt->bind_param("ii", $hoc_vien_id, $khoa_hoc_id);
         $stmt->execute();
-        return (int)($stmt->get_result()->fetch_assoc()['c']) > 0;
+        $r = $stmt->get_result()->fetch_assoc();
+        return $r ? $r['trang_thai'] : null;
     }
 
     public function dangKy($hoc_vien_id, $khoa_hoc_id) {

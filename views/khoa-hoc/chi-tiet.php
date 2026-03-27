@@ -22,12 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dang_ky'])) {
         exit;
     }
     $nd = $auth->layThongTinNguoiDung();
-    if ($khoa_hoc_model->daDangKy($nd['id'], $id)) {
+
+    $trang_thai_hien_tai = $khoa_hoc_model->daDangKy($nd['id'], $id);
+
+    // Đã có đăng ký (chờ hoặc đã duyệt) → không tạo lại
+    if ($trang_thai_hien_tai !== null) {
         $thong_bao = 'Bạn đã đăng ký khóa học này rồi.';
         $thong_bao_type = 'warning';
     } else {
         if ($khoa_hoc_model->dangKy($nd['id'], $id)) {
-            $thong_bao = 'Đăng ký khóa học thành công! Bạn có thể bắt đầu học ngay.';
+            $thong_bao = 'Đăng ký khóa học thành công! Đang chờ quản trị duyệt.';
+            $thong_bao_type = 'info';
         } else {
             $thong_bao = 'Đăng ký thất bại. Vui lòng thử lại.';
             $thong_bao_type = 'danger';
@@ -41,12 +46,11 @@ $bh_model = new BaiHoc();
 $bai_hoc_list = $bh_model->layTheoKhoaHoc($id);
 $tong_thoi_luong = $bh_model->tinhTongThoiLuong($id);
 
-// Check enrollment
-$da_dang_ky = false;
+// Kiểm tra đăng ký - lấy đầy đủ trạng thái
 $nguoi_dung_hien_tai = $auth->layThongTinNguoiDung();
-if ($nguoi_dung_hien_tai) {
-    $da_dang_ky = $khoa_hoc_model->daDangKy($nguoi_dung_hien_tai['id'], $id);
-}
+$trang_thai_dk = $nguoi_dung_hien_tai
+    ? $khoa_hoc_model->daDangKy($nguoi_dung_hien_tai['id'], $id)
+    : null;
 
 include __DIR__ . '/../../views/layouts/header.php';
 ?>
@@ -191,8 +195,8 @@ include __DIR__ . '/../../views/layouts/header.php';
                     </div>
 
                     <?php if ($auth->kiemTraDangNhap()): ?>
-                        <?php if ($da_dang_ky): ?>
-                            <!-- Đã đăng ký -->
+                        <?php if ($trang_thai_dk === 'da_xac_nhan'): ?>
+                            <!-- Đã xác nhận → Học ngay -->
                             <div class="d-grid gap-2">
                                 <?php if (!empty($bai_hoc_list)): ?>
                                     <a href="<?php echo VIEWS_URL; ?>/bai-hoc/chi-tiet.php?id=<?php echo $bai_hoc_list[0]['id']; ?>"
@@ -207,6 +211,25 @@ include __DIR__ . '/../../views/layouts/header.php';
                                     Bạn đã đăng ký khóa học này.
                                 </div>
                             </div>
+                        <?php elseif ($trang_thai_dk === 'cho_xu_ly'): ?>
+                            <!-- Đang chờ duyệt -->
+                            <div class="alert alert-warning py-2 mb-2">
+                                <i class="fas fa-clock me-1"></i>
+                                Đăng ký đang chờ duyệt.
+                            </div>
+                            <a href="<?php echo VIEWS_URL; ?>/home/index.php" class="btn btn-outline-secondary w-100 py-2">
+                                <i class="fas fa-chart-line me-1"></i>Xem tiến độ
+                            </a>
+                        <?php elseif ($trang_thai_dk === 'da_huy'): ?>
+                            <!-- Đã bị hủy → cho đăng ký lại -->
+                            <form method="POST">
+                                <button type="submit" name="dang_ky" class="btn btn-primary w-100 py-2 fw-semibold mb-2">
+                                    <i class="fas fa-redo me-1"></i>Đăng ký lại
+                                </button>
+                            </form>
+                            <a href="<?php echo VIEWS_URL; ?>/home/index.php" class="btn btn-outline-secondary w-100 py-2">
+                                <i class="fas fa-chart-line me-1"></i>Xem tiến độ
+                            </a>
                         <?php else: ?>
                             <!-- Chưa đăng ký -->
                             <form method="POST">

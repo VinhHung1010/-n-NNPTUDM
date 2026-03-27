@@ -76,7 +76,7 @@ include __DIR__ . '/partials/layout_start.php';
 </div>
 
 <div class="row g-3">
-    <div class="col-md-4">
+    <div class="col-sm-6 col-md-4">
         <a href="<?php echo SITE_URL; ?>/admin/nguoi-dung/index.php" class="text-decoration-none">
             <div class="card stat-card h-100">
                 <div class="card-body d-flex align-items-center gap-3">
@@ -84,17 +84,31 @@ include __DIR__ . '/partials/layout_start.php';
                     <div>
                         <div class="text-muted small">Quản lý</div>
                         <div class="fw-semibold text-dark">Người dùng</div>
-                        <div class="small text-muted">Xem, khóa / mở khóa</div>
+                        <div class="small text-muted">Khóa / Mở khóa</div>
                     </div>
                 </div>
             </div>
         </a>
     </div>
-    <div class="col-md-8">
+    <div class="col-sm-6 col-md-4">
+        <a href="<?php echo SITE_URL; ?>/admin/danh-muc/index.php" class="text-decoration-none">
+            <div class="card stat-card h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="icon bg-success bg-opacity-10 text-success"><i class="fas fa-layer-group"></i></div>
+                    <div>
+                        <div class="text-muted small">Quản lý</div>
+                        <div class="fw-semibold text-dark">Danh mục</div>
+                        <div class="small text-muted">Thêm / Sửa / Xóa</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
         <div class="card stat-card h-100">
             <div class="card-body">
-                <h2 class="h6 mb-2"><i class="fas fa-circle-info me-2 text-primary"></i>Hướng dẫn nhanh</h2>
-                <p class="text-muted small mb-0">Sử dụng menu bên trái hoặc các thẻ liên kết để truy cập chức năng quản trị. Tài khoản quản trị không thể bị khóa.</p>
+                <h2 class="h6 mb-2"><i class="fas fa-circle-info me-2 text-primary"></i>Hướng dẫn</h2>
+                <p class="text-muted small mb-0">Sử dụng menu bên trái hoặc các thẻ liên kết để truy cập chức năng quản trị.</p>
             </div>
         </div>
     </div>

@@ -1,25 +1,23 @@
-feat(badges): them he thong huy hieu thanh tich gamification
+feat(recommendation): them he thong goi y khoa hoc ca nhan hoa
 
-Them bang huy_hieu va nguoi_dung_huy_hieu vao database de luu
-tru danh sach huy hieu va tiến độ đạt được của người dùng.
+Them bang lich_su_xem de ghi nhan cac khoa hoc da xem cua
+nguoi dung. Them bang danh_gia_khoa_hoc de luu tru danh
+gia (sao) va binh luan. Them bang goi_y_da_xem de tranh
+goi y lap lai.
 
-Tao model HuyHieu voi cac phuong thuc: lay tat ca, lay cua nguoi
-dung, dem, kiem tra va tu dong trao badges khi dat dieu kien,
-lay leaderboard.
+Tao model GoiY voi cac thuat toan goi y: cung danh muc
+(user da xem khoa hoc nao thi goi y cung danh muc),
+cung giao vien (goi y khoa hoc cung giang vien da xem),
+pho bien (khoa hoc nhieu hoc vien va diem cao), moi nhat
+(khoa hoc duoc tao gan day).
 
-Them 12 huy hieu mau: Khoa hoc (Tân binh, Nguoi hoc, Chuyen gia),
-Quiz (Khám phá, Bac thay Quiz, Huyen thoai Quiz), Q&A (Nguoi
-giup do, Mentor), Streak (Kien tri, Cham chi, Sieng nang), Special
-(Ngoi sao sang).
+Tao API /api/goi-y.php xu ly: lay danh sach goi y theo
+loai, ghi nhan luot xem, danh gia khoa hoc, lay danh gia,
+lay lich su xem.
 
-Tao trang xem huy hieu tai /views/huy-hieu/index.php voi giao
-dien dep: header tieu de, bieu do thanh tich, bang xep hang
-leaderboard, huy hieu da dat (vang), huy hieu chua dat (xam).
+Tao trang goi y tai /views/goi-y/index.php voi giao dien
+dep: header, cac tab loc (Tat ca, Cung danh muc, Cung giang
+vien, Pho bien, Moi nhat), the hien khóa hoc voi badge
+loai goi y, nut yeu thich, danh gia sao, lich su da xem.
 
-Tich hop kiem tra badges tu dong khi: hoan thanh khoa hoc,
-nop bai quiz, tra loi cau hoi Q&A.
-
-Hien thi preview huy hieu tren trang tien do hoc tap.
-
-Tao API /api/huy-hieu.php xu ly: kiem tra va trao badges,
-lay danh sach badges, lay leaderboard.
+Tich hop nut "Goi y" vao navbar.

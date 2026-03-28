@@ -324,3 +324,54 @@ INSERT INTO huy_hieu (ma, ten, mo_ta, icon, mau, diem_threshold, loai) VALUES
 ('streak_30', 'Siêng năng', 'Học liên tiếp 30 ngày', 'fa-bolt', '#EAB308', 30, 'streak'),
 -- Special
 ('all_star', 'Ngôi sao sáng', 'Đạt tất cả các thành tựu', 'fa-gem', '#FFD700', 0, 'special');
+
+-- =====================================================
+-- BẢNG GỢI Ý KHÓA HỌC CÁ NHÂN HÓA (Recommendation)
+-- =====================================================
+
+-- Bảng lịch sử xem khóa học (để đánh giá mức độ quan tâm)
+CREATE TABLE IF NOT EXISTS lich_su_xem (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_dung INT NOT NULL,
+    id_khoa_hoc INT NOT NULL,
+    thoi_gian_xem INT DEFAULT 0 COMMENT 'Thời gian xem tính bằng giây',
+    ngay_xem TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_khoa_hoc) REFERENCES khoa_hoc(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_view (id_nguoi_dung, id_khoa_hoc),
+    INDEX idx_nguoi_dung (id_nguoi_dung),
+    INDEX idx_ngay_xem (ngay_xem DESC)
+) ENGINE=InnoDB;
+
+-- Bảng đánh giá khóa học (sao)
+CREATE TABLE IF NOT EXISTS danh_gia_khoa_hoc (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_dung INT NOT NULL,
+    id_khoa_hoc INT NOT NULL,
+    diem_so INT CHECK (diem_so BETWEEN 1 AND 5),
+    binh_luan TEXT,
+    ngay_danh_gia TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_khoa_hoc) REFERENCES khoa_hoc(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_review (id_nguoi_dung, id_khoa_hoc),
+    INDEX idx_khoa_hoc (id_khoa_hoc)
+) ENGINE=InnoDB;
+
+-- Bảng gợi ý đã hiển thị (tránh gợi ý lặp lại)
+CREATE TABLE IF NOT EXISTS goi_y_da_xem (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_dung INT NOT NULL,
+    id_khoa_hoc INT NOT NULL,
+    loai_goi_y ENUM('cung_danh_muc', 'cung_giao_vien', 'tuong_tu', 'pho_bien', 'moi_nhat') DEFAULT 'pho_bien',
+    diem_goi_y DECIMAL(5,2) DEFAULT 0 COMMENT 'Điểm relevance',
+    ngay_xem TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_khoa_hoc) REFERENCES khoa_hoc(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_recommendation (id_nguoi_dung, id_khoa_hoc, loai_goi_y)
+) ENGINE=InnoDB;
+
+-- Dữ liệu mẫu: Đánh giá
+INSERT INTO danh_gia_khoa_hoc (id_nguoi_dung, id_khoa_hoc, diem_so, binh_luan) VALUES
+(2, 1, 5, 'Khóa học rất hay và dễ hiểu!'),
+(2, 2, 4, 'Nội dung phong phú, giảng viên nhiệt tình.'),
+(3, 1, 5, 'Tuyệt vời! Đã học được nhiều kiến thức mới.');

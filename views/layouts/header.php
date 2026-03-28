@@ -553,6 +553,12 @@ function isActive($pattern, $path = null) {
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link <?php echo isActive('/hoi-dap/'); ?>"
+                           href="<?php echo VIEWS_URL; ?>/hoi-dap/index.php">
+                            <i class="fas fa-comments me-1"></i>Hỏi đáp
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link <?php echo isActive('/yeu-thich/'); ?>"
                            href="<?php echo VIEWS_URL; ?>/yeu-thich/index.php">
                             <i class="fas fa-heart me-1"></i>Yêu thích

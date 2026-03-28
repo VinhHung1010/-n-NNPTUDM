@@ -1,18 +1,22 @@
-feat(notification): them he thong thong bao cho nguoi dung
+feat(qa-forum): them he thong hoi dap thao luan cho bai hoc
 
-Them bang thong_bao vao database schema de luu tru cac thong bao
-he thong. Tao model ThongBao voi cac phuong thuc: gui thong bao,
-lay danh sach, danh dau da doc, xoa, dem thong bao chua doc.
+Them bang hoi_dap, tra_loi, thich_cau_hoi, thich_tra_loi vao
+database de luu tru cau hoi, cau tra loi, va he thong thich.
 
-Tich hop notification bell vao header voi dropdown hien thi
-thong bao chua doc. Ho tro cac loai thong bao: duyet khoa hoc,
-tu choi khoa hoc, hoan thanh khoa hoc, chung chi, dang ky,
-bai kiem tra.
+Tao model HoiDap voi cac phuong thuc: tao cau hoi, them cau tra
+loi, thich/bo thich cau hoi, danh dau cau tra loi hay nhat.
 
-Tao trang xem tat ca thong bao tai /views/thong-bao/index.php
-voi bo loc theo loai va nut xoa. Tao API /api/thong-bao.php
-xu ly cac thao tac: mark_read, mark_all_read, delete.
+Tich hop UI Q&A vao trang chi tiet bai hoc voi nut dat cau hoi,
+hien thi danh sach cau hoi, xem truoc cau tra loi.
 
-Tich hop gui thong bao tu dong khi: admin duyet/tu choi/hien
-thi lai khoa hoc, admin xac nhan/huy dang ky hoc vien,
-hoc vien hoan thanh khoa hoc nhan chung chi.
+Tao trang danh sach Q&A tai /views/hoi-dap/index.php voi bo loc:
+Tat ca, Cau hoi cua toi, Chua tra loi, Da tra loi.
+
+Tao trang chi tiet Q&A tai /views/hoi-dap/chi-tiet.php voi form
+tra loi, nut thich, danh dau cau tra loi hay nhat, xoa cau hoi.
+
+Tao API /api/hoi-dap.php xu ly: tao cau hoi, tao cau tra loi,
+thich/bo thich, danh dau hay nhat, xoa cau hoi.
+
+Tich hop thong bao khi co cau tra loi moi gui den nguoi dat
+cau hoi. Them link Hoi dap vao navbar.

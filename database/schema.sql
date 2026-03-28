@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS thong_bao (
     id_nguoi_nhan INT NOT NULL,
     tieu_de VARCHAR(255) NOT NULL,
     noi_dung TEXT,
-    loai ENUM('dang_ky', 'duyet_khoa', 'tu_choi_khoa', 'hoan_thanh_khoa', 'chung_chi', 'quiz', 'he_thong') DEFAULT 'he_thong',
+    loai ENUM('dang_ky', 'duyet_khoa', 'tu_choi_khoa', 'hoan_thanh_khoa', 'chung_chi', 'quiz', 'he_thong', 'cau_tra_loi') DEFAULT 'he_thong',
     duong_dan VARCHAR(255) DEFAULT NULL,
     da_doc BOOLEAN DEFAULT FALSE,
     ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -168,6 +168,59 @@ CREATE TABLE IF NOT EXISTS thong_bao (
     INDEX idx_nguoi_nhan (id_nguoi_nhan),
     INDEX idx_da_doc (da_doc),
     INDEX idx_ngay_tao (ngay_tao DESC)
+) ENGINE=InnoDB;
+
+-- Bảng Hỏi đáp / Thảo luận
+CREATE TABLE IF NOT EXISTS hoi_dap (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_hoi INT NOT NULL,
+    id_bai_hoc INT NOT NULL,
+    tieu_de VARCHAR(255) NOT NULL,
+    noi_dung TEXT NOT NULL,
+    trang_thai ENUM('cho_tra_loi', 'da_tra_loi', 'dong') DEFAULT 'cho_tra_loi',
+    luot_xem INT DEFAULT 0,
+    luot_thich INT DEFAULT 0,
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_hoi) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_bai_hoc) REFERENCES bai_hoc(id) ON DELETE CASCADE,
+    INDEX idx_bai_hoc (id_bai_hoc),
+    INDEX idx_ngay_tao (ngay_tao DESC)
+) ENGINE=InnoDB;
+
+-- Bảng câu trả lời
+CREATE TABLE IF NOT EXISTS tra_loi (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_cau_hoi INT NOT NULL,
+    id_nguoi_tra_loi INT NOT NULL,
+    noi_dung TEXT NOT NULL,
+    la_cau_tra_tot_nhat BOOLEAN DEFAULT FALSE,
+    so_thich INT DEFAULT 0,
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_cau_hoi) REFERENCES hoi_dap(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_nguoi_tra_loi) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    INDEX idx_cau_hoi (id_cau_hoi)
+) ENGINE=InnoDB;
+
+-- Bảng lượt thích câu hỏi
+CREATE TABLE IF NOT EXISTS thich_cau_hoi (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_dung INT NOT NULL,
+    id_cau_hoi INT NOT NULL,
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_cau_hoi) REFERENCES hoi_dap(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_like_question (id_nguoi_dung, id_cau_hoi)
+) ENGINE=InnoDB;
+
+-- Bảng lượt thích câu trả lời
+CREATE TABLE IF NOT EXISTS thich_tra_loi (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_dung INT NOT NULL,
+    id_tra_loi INT NOT NULL,
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_tra_loi) REFERENCES tra_loi(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_like_answer (id_nguoi_dung, id_tra_loi)
 ) ENGINE=InnoDB;
 
 -- Dữ liệu mẫu: Danh mục

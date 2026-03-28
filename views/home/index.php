@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../models/khoa_hoc.php';
 require_once __DIR__ . '/../../models/quiz.php';
 require_once __DIR__ . '/../../models/tien_do.php';
 require_once __DIR__ . '/../../models/chung_chi.php';
+require_once __DIR__ . '/../../models/huy_hieu.php';
 
 $page_title = 'Tiến độ học tập - ' . SITE_NAME;
 $auth = new Auth();
@@ -19,6 +20,7 @@ $kh_model   = new KhoaHoc();
 $quiz_model = new Quiz();
 $td_model   = new TienDo();
 $cc_model   = new ChungChi();
+$hh_model   = new HuyHieu();
 
 // Lấy khóa học đã đăng ký
 $khoa_dang_ky = $kh_model->layKhoaHocCuaHocVien($nguoi_dung['id']);
@@ -50,6 +52,11 @@ foreach ($ket_qua_list as $kq) { if ((int)$kq['diem_so'] > $diem_max) $diem_max 
 
 // Bài quiz đã làm
 $so_quiz_lam = count($ket_qua_list);
+
+// Lấy badges của user cho dashboard
+$badges_preview = array_slice($hh_model->layCuaNguoiDung($nguoi_dung['id']), 0, 3);
+$so_badges = $hh_model->demCuaNguoiDung($nguoi_dung['id']);
+$tong_badges = count($hh_model->layTatCa());
 
 // Khóa học gợi ý
 $khoa_tat_ca = $kh_model->layTatCa('da_duyet');
@@ -115,6 +122,42 @@ include __DIR__ . '/../layouts/header.php';
                 </div>
                 <div class="fs-4 fw-bold" style="color:#16A34A"><?php echo $diem_max; ?></div>
                 <div class="small text-muted">Điểm cao nhất</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Huy hiệu Preview -->
+    <div class="card mb-4" style="border-radius: 16px; border: 1px solid var(--border);">
+        <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3 py-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #FFD700, #F59E0B); color: white;">
+                    <i class="fas fa-award"></i>
+                </div>
+                <div>
+                    <div class="fw-bold" style="font-size: 0.95rem;">
+                        <i class="fas fa-trophy me-1" style="color: #F59E0B;"></i>
+                        Huy hiệu của tôi
+                    </div>
+                    <div class="small text-muted">
+                        <?php echo $so_badges; ?> / <?php echo $tong_badges; ?> huy hiệu đã đạt
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <?php if (!empty($badges_preview)): ?>
+                    <?php foreach ($badges_preview as $badge): ?>
+                        <div class="d-flex align-items-center gap-1 small fw-semibold px-2 py-1 rounded-pill" 
+                             style="background: <?php echo $hh_model->getLoaiColor($badge['loai']); ?>20; color: <?php echo $hh_model->getLoaiColor($badge['loai']); ?>;">
+                            <i class="fas <?php echo $badge['icon'] ?? 'fa-award'; ?>"></i>
+                            <?php echo htmlspecialchars($badge['ten']); ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <span class="text-muted small">Chưa có huy hiệu nào</span>
+                <?php endif; ?>
+                <a href="<?php echo VIEWS_URL; ?>/huy-hieu/index.php" class="btn btn-sm btn-warning text-dark fw-semibold">
+                    <i class="fas fa-award me-1"></i>Xem tất cả
+                </a>
             </div>
         </div>
     </div>

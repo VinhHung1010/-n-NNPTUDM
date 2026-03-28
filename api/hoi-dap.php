@@ -61,6 +61,19 @@ switch ($action) {
                     VIEWS_URL . '/hoi-dap/chi-tiet.php?id=' . $id_cau_hoi
                 );
             }
+            // Kiểm tra badges Q&A
+            require_once __DIR__ . '/../models/huy_hieu.php';
+            $hh_model = new HuyHieu();
+            $badges_moi = $hh_model->kiemTraVaTrao($nguoi_dung['id']);
+            foreach ($badges_moi as $badge) {
+                $tb_model->guiThongBao(
+                    $nguoi_dung['id'],
+                    'Bạn nhận được huy hiệu mới!',
+                    'Chúc mừng bạn đã đạt được huy hiệu "' . $badge['ten'] . '"!',
+                    'he_thong',
+                    VIEWS_URL . '/huy-hieu/index.php'
+                );
+            }
             echo json_encode(['success' => true, 'message' => 'Câu trả lời đã được gửi!', 'id' => $id_tra_loi]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Gửi câu trả lời thất bại']);

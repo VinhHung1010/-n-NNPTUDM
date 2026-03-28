@@ -173,12 +173,34 @@ class Quiz {
         $stmt->bind_param("iiiii", $id_hoc_vien, $id_quiz, $diem, $so_cau_dung, $thoi_gian_lam_bai);
         $stmt->execute();
 
+        // Gọi kiểm tra badges sau khi nộp bài
+        $this->kiemTraBadgeQuiz($id_hoc_vien, $diem);
+
         return [
             'success' => true,
             'diem_so' => $diem,
             'so_cau_dung' => $so_cau_dung,
             'tong_cau' => $tong_cau
         ];
+    }
+
+    // Kiểm tra và trao badges quiz
+    public function kiemTraBadgeQuiz($id_hoc_vien, $diem) {
+        require_once __DIR__ . '/huy_hieu.php';
+        require_once __DIR__ . '/thong_bao.php';
+        $hh_model = new HuyHieu();
+        $tb_model = new ThongBao();
+        
+        $badges_moi = $hh_model->kiemTraVaTrao($id_hoc_vien);
+        foreach ($badges_moi as $badge) {
+            $tb_model->guiThongBao(
+                $id_hoc_vien,
+                'Bạn nhận được huy hiệu mới!',
+                'Chúc mừng bạn đã đạt được huy hiệu "' . $badge['ten'] . '"! ' . ($badge['mo_ta'] ?? ''),
+                'he_thong',
+                VIEWS_URL . '/huy-hieu/index.php'
+            );
+        }
     }
 
     public function layKetQua($hoc_vien_id, $quiz_id = null) {

@@ -223,6 +223,30 @@ CREATE TABLE IF NOT EXISTS thich_tra_loi (
     UNIQUE KEY unique_like_answer (id_nguoi_dung, id_tra_loi)
 ) ENGINE=InnoDB;
 
+-- Bảng huy hiệu / Thành tựu
+CREATE TABLE IF NOT EXISTS huy_hieu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ma VARCHAR(50) UNIQUE NOT NULL,
+    ten VARCHAR(100) NOT NULL,
+    mo_ta TEXT,
+    icon VARCHAR(50) DEFAULT 'fa-award',
+    mau VARCHAR(20) DEFAULT '#F59E0B',
+    diem_threshold INT DEFAULT 0,
+    loai ENUM('khoa_hoc', 'quiz', 'qa', 'streak', 'special') DEFAULT 'special',
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Bảng huy hiệu đã đạt được của người dùng
+CREATE TABLE IF NOT EXISTS nguoi_dung_huy_hieu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_dung INT NOT NULL,
+    id_huy_hieu INT NOT NULL,
+    ngay_dat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_huy_hieu) REFERENCES huy_hieu(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_badge (id_nguoi_dung, id_huy_hieu)
+) ENGINE=InnoDB;
+
 -- Dữ liệu mẫu: Danh mục
 INSERT INTO danh_muc (ten_danh_muc, mo_ta) VALUES
 ('Lập trình Web', 'Các khóa học về lập trình web'),
@@ -280,3 +304,23 @@ INSERT INTO dap_an (id_cau_hoi, noi_dung, la_dap_an_dung) VALUES
 (5, '<div>', TRUE),
 (5, '<span>', FALSE),
 (5, '<p>', TRUE);
+
+-- Dữ liệu mẫu: Huy hiệu
+INSERT INTO huy_hieu (ma, ten, mo_ta, icon, mau, diem_threshold, loai) VALUES
+-- Khóa học
+('first_course', 'Tân binh', 'Hoàn thành khóa học đầu tiên', 'fa-rocket', '#4F46E5', 1, 'khoa_hoc'),
+('course_5', 'Người học', 'Hoàn thành 5 khóa học', 'fa-graduation-cap', '#10B981', 5, 'khoa_hoc'),
+('course_10', 'Chuyên gia', 'Hoàn thành 10 khóa học', 'fa-crown', '#F59E0B', 10, 'khoa_hoc'),
+-- Quiz
+('quiz_first', 'Khám phá', 'Làm bài Quiz đầu tiên', 'fa-file-alt', '#3B82F6', 1, 'quiz'),
+('quiz_master', 'Bậc thầy Quiz', 'Đạt 100 điểm trong 5 bài Quiz', 'fa-brain', '#8B5CF6', 5, 'quiz'),
+('quiz_legend', 'Huyền thoại Quiz', 'Đạt 100 điểm trong 10 bài Quiz', 'fa-star', '#EF4444', 10, 'quiz'),
+-- Q&A
+('qa_helper', 'Người giúp đỡ', 'Trả lời 5 câu hỏi', 'fa-hands-helping', '#06B6D4', 5, 'qa'),
+('qa_mentor', 'Mentor', 'Trả lời 20 câu hỏi', 'fa-chalkboard-teacher', '#059669', 20, 'qa'),
+-- Streak
+('streak_3', 'Kiên trì', 'Học liên tiếp 3 ngày', 'fa-fire-alt', '#F97316', 3, 'streak'),
+('streak_7', 'Chăm chỉ', 'Học liên tiếp 7 ngày', 'fa-calendar-check', '#EC4899', 7, 'streak'),
+('streak_30', 'Siêng năng', 'Học liên tiếp 30 ngày', 'fa-bolt', '#EAB308', 30, 'streak'),
+-- Special
+('all_star', 'Ngôi sao sáng', 'Đạt tất cả các thành tựu', 'fa-gem', '#FFD700', 0, 'special');

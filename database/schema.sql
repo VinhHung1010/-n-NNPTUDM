@@ -129,6 +129,20 @@ CREATE TABLE IF NOT EXISTS certificates (
     UNIQUE KEY unique_cert (id_hoc_vien, id_khoa_hoc)
 ) ENGINE=InnoDB;
 
+-- Bảng đánh giá khóa học
+CREATE TABLE IF NOT EXISTS danh_gia (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_dung INT NOT NULL,
+    id_khoa_hoc INT NOT NULL,
+    diem_so INT NOT NULL CHECK (diem_so >= 1 AND diem_so <= 5),
+    noi_dung TEXT,
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ngay_cap_nhat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_dung) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_khoa_hoc) REFERENCES khoa_hoc(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_review (id_nguoi_dung, id_khoa_hoc)
+) ENGINE=InnoDB;
+
 -- Bảng yêu thích khóa học
 CREATE TABLE IF NOT EXISTS yeu_thich (
     id INT AUTO_INCREMENT PRIMARY KEY,

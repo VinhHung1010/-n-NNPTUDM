@@ -382,6 +382,12 @@ function isActive($pattern, $path = null) {
                             <i class="fas fa-chart-line me-1"></i>Tiến độ
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo isActive('/yeu-thich/'); ?>"
+                           href="<?php echo VIEWS_URL; ?>/yeu-thich/index.php">
+                            <i class="fas fa-heart me-1"></i>Yêu thích
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-circle-user me-1"></i><?php echo htmlspecialchars($nguoi_dung['ho_ten']); ?>

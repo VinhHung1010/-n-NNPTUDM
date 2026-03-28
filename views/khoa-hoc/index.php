@@ -3,14 +3,22 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../models/auth.php';
 require_once __DIR__ . '/../../models/khoa_hoc.php';
 require_once __DIR__ . '/../../models/danh_muc.php';
+require_once __DIR__ . '/../../models/yeu_thich.php';
 
 $page_title = 'Khóa học - ' . SITE_NAME;
 $auth = new Auth();
 $kh_model = new KhoaHoc();
 $dm_model = new DanhMuc();
+$yeu_thich_model = new YeuThich();
 
 $all_khoa_hoc = $kh_model->layTatCa('da_duyet');
 $danh_mucs = $dm_model->layTatCa();
+
+// Lấy danh sách ID khóa học đã yêu thích
+$yeu_thich_ids = [];
+if ($auth->kiemTraDangNhap()) {
+    $yeu_thich_ids = $yeu_thich_model->layIdsYeuThich($_SESSION['nguoi_dung']['id']);
+}
 
 $tu_khoa    = isset($_GET['tu_khoa']) ? trim($_GET['tu_khoa']) : '';
 $danh_muc_id = isset($_GET['danh_muc']) ? (int)$_GET['danh_muc'] : 0;
@@ -115,6 +123,16 @@ include __DIR__ . '/../../views/layouts/header.php';
                                     <i class="fas fa-file-lines me-1"></i><?php echo $k['so_bai_hoc']; ?> bài
                                 </span>
                             <?php endif; ?>
+                            <?php if ($auth->kiemTraDangNhap()): ?>
+                                <?php $da_yeu_thich = in_array($k['id'], $yeu_thich_ids); ?>
+                                <button class="btn btn-sm <?php echo $da_yeu_thich ? 'btn-danger' : 'btn-outline-danger'; ?> position-absolute bottom-0 <?php echo $da_yeu_thich ? 'end-0' : 'end-0'; ?> m-2 favorite-btn p-1 px-2"
+                                        onclick="toggleFavorite(<?php echo $k['id']; ?>, this)"
+                                        title="<?php echo $da_yeu_thich ? 'Bỏ yêu thích' : 'Yêu thích'; ?>"
+                                        style="border-radius: 20px; font-size: 0.75rem;">
+                                    <i class="<?php echo $da_yeu_thich ? 'fas' : 'far'; ?> fa-heart me-1"></i>
+                                    <span class="fav-text"><?php echo $da_yeu_thich ? 'Yêu thích' : 'Yêu thích'; ?></span>
+                                </button>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title"><?php echo htmlspecialchars($k['ten_khoa_hoc']); ?></h5>
@@ -140,5 +158,49 @@ include __DIR__ . '/../../views/layouts/header.php';
     <?php endif; ?>
 
 </div>
+
+<script>
+// Toggle favorite function
+async function toggleFavorite(khoaHocId, btnElement) {
+    try {
+        const response = await fetch(`<?php echo VIEWS_URL; ?>/yeu-thich/controller.php?action=toggle&id_khoa_hoc=${khoaHocId}`);
+        const data = await response.json();
+
+        if (data.success) {
+            const icon = btnElement.querySelector('i');
+            const textSpan = btnElement.querySelector('.fav-text');
+
+            if (data.data.action === 'added') {
+                // Đã thêm vào yêu thích
+                btnElement.classList.remove('btn-outline-danger');
+                btnElement.classList.add('btn-danger');
+                btnElement.classList.remove('p-1');
+                btnElement.classList.add('p-1', 'px-2');
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                if (textSpan) textSpan.textContent = 'Yêu thích';
+                btnElement.title = 'Bỏ yêu thích';
+            } else {
+                // Đã xóa khỏi yêu thích
+                btnElement.classList.remove('btn-danger');
+                btnElement.classList.add('btn-outline-danger');
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                if (textSpan) textSpan.textContent = 'Yêu thích';
+                btnElement.title = 'Yêu thích';
+            }
+        } else {
+            if (data.message && data.message.includes('đăng nhập')) {
+                window.location.href = '<?php echo VIEWS_URL; ?>/tai-khoan/dang-nhap.php';
+            } else {
+                alert(data.message || 'Có lỗi xảy ra!');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Có lỗi xảy ra. Vui lòng thử lại!');
+    }
+}
+</script>
 
 <?php include __DIR__ . '/../../views/layouts/footer.php'; ?>

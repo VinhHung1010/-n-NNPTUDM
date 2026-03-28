@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../models/bai_hoc.php';
 require_once __DIR__ . '/../../models/khoa_hoc.php';
 require_once __DIR__ . '/../../models/tien_do.php';
 require_once __DIR__ . '/../../models/chung_chi.php';
+require_once __DIR__ . '/../../models/thong_bao.php';
 
 $page_title = 'Chi tiết Bài học - ' . SITE_NAME;
 $auth = new Auth();
@@ -12,6 +13,7 @@ $bai_hoc_model = new BaiHoc();
 $khoa_hoc_model = new KhoaHoc();
 $td_model = new TienDo();
 $cc_model = new ChungChi();
+$thong_bao_model = new ThongBao();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -65,9 +67,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_hoan_thanh']) 
     $da_hoan_thanh_kh = $td_model->daHoanThanhKhoaHoc($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
     $tien_do_map  = $td_model->layTienDoKhoaHoc($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
 
-    // Nếu hoàn thành 100% → tạo chứng chỉ
+    // Nếu hoàn thành 100% → tạo chứng chỉ + gửi thông báo
     if ($da_hoan_thanh_kh) {
         $chung_chi = $cc_model->tao($nguoi_dung['id'], $bai_hoc['id_khoa_hoc']);
+        // Gửi thông báo hoàn thành khóa học
+        $thong_bao_model->guiThongBao(
+            $nguoi_dung['id'],
+            'Bạn đã hoàn thành khóa học!',
+            'Chúc mừng bạn đã hoàn thành khóa học "' . $khoa_hoc['ten_khoa_hoc'] . '" và nhận được chứng chỉ!',
+            'hoan_thanh_khoa',
+            VIEWS_URL . '/chung-chi/xem.php'
+        );
+        // Gửi thông báo chứng chỉ
+        if ($chung_chi) {
+            $thong_bao_model->guiThongBao(
+                $nguoi_dung['id'],
+                'Chứng chỉ mới đã được cấp!',
+                'Bạn đã nhận được chứng chỉ hoàn thành khóa học "' . $khoa_hoc['ten_khoa_hoc'] . '". Mã: ' . $chung_chi['ma_chung_chi'],
+                'chung_chi',
+                VIEWS_URL . '/chung-chi/xem.php?ma=' . urlencode($chung_chi['ma_chung_chi'])
+            );
+        }
     }
 }
 

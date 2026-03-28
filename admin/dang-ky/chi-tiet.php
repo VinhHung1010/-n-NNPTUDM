@@ -2,8 +2,10 @@
 $page_title = 'Chi tiết Đăng ký';
 require_once __DIR__ . '/../bootstrap.php';
 require_once dirname(__DIR__) . '/../models/dang_ky.php';
+require_once dirname(__DIR__) . '/../models/thong_bao.php';
 
 $dk_model = new DangKy();
+$thong_bao_model = new ThongBao();
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $d = $dk_model->layTheoId($id);
 
@@ -20,11 +22,30 @@ if (isset($_GET['action'])) {
             $dk_model->capNhatTrangThai($id, 'da_xac_nhan');
             $thong_bao = '<div class="alert alert-success">Đã xác nhận đăng ký.</div>';
             $d['trang_thai'] = 'da_xac_nhan';
+            // Gửi thông báo cho học viên
+            if ($d['id_hoc_vien']) {
+                $thong_bao_model->guiThongBao(
+                    $d['id_hoc_vien'],
+                    'Đăng ký khóa học đã được xác nhận',
+                    'Bạn đã được xác nhận tham gia khóa học "' . $d['ten_khoa_hoc'] . '". Hãy bắt đầu học ngay!',
+                    'dang_ky',
+                    VIEWS_URL . '/home/index.php'
+                );
+            }
             break;
         case 'huy':
             $dk_model->capNhatTrangThai($id, 'da_huy');
             $thong_bao = '<div class="alert alert-warning">Đã hủy đăng ký.</div>';
             $d['trang_thai'] = 'da_huy';
+            if ($d['id_hoc_vien']) {
+                $thong_bao_model->guiThongBao(
+                    $d['id_hoc_vien'],
+                    'Đăng ký khóa học đã bị hủy',
+                    'Đăng ký khóa học "' . $d['ten_khoa_hoc'] . '" đã bị hủy.',
+                    'dang_ky',
+                    VIEWS_URL . '/home/index.php'
+                );
+            }
             break;
         case 'cho_xu_ly':
             $dk_model->capNhatTrangThai($id, 'cho_xu_ly');

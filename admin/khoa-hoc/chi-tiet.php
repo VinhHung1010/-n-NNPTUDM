@@ -2,8 +2,10 @@
 $page_title = 'Chi tiết Khóa học';
 require_once __DIR__ . '/../bootstrap.php';
 require_once dirname(__DIR__) . '/../models/khoa_hoc.php';
+require_once dirname(__DIR__) . '/../models/thong_bao.php';
 
 $kh = new KhoaHoc();
+$thong_bao_model = new ThongBao();
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $khoa_hoc = $kh->layTheoId($id);
 
@@ -23,6 +25,16 @@ if (isset($_GET['action'])) {
             $kh->capNhatTrangThai($id, 'da_duyet');
             $thong_bao = '<div class="alert alert-success">Đã duyệt khóa học.</div>';
             $khoa_hoc['trang_thai'] = 'da_duyet';
+            // Gửi thông báo cho giáo viên
+            if ($khoa_hoc['id_nguoi_tao']) {
+                $thong_bao_model->guiThongBao(
+                    $khoa_hoc['id_nguoi_tao'],
+                    'Khóa học đã được duyệt',
+                    'Khóa học "' . $khoa_hoc['ten_khoa_hoc'] . '" đã được duyệt và hiển thị trên hệ thống.',
+                    'duyet_khoa',
+                    VIEWS_URL . '/khoa-hoc/chi-tiet.php?id=' . $id
+                );
+            }
             break;
         case 'an':
             $kh->capNhatTrangThai($id, 'bi_an');
@@ -33,11 +45,29 @@ if (isset($_GET['action'])) {
             $kh->capNhatTrangThai($id, 'da_duyet');
             $thong_bao = '<div class="alert alert-success">Đã hiển thị khóa học.</div>';
             $khoa_hoc['trang_thai'] = 'da_duyet';
+            if ($khoa_hoc['id_nguoi_tao']) {
+                $thong_bao_model->guiThongBao(
+                    $khoa_hoc['id_nguoi_tao'],
+                    'Khóa học đã được hiển thị lại',
+                    'Khóa học "' . $khoa_hoc['ten_khoa_hoc'] . '" đã được hiển thị trở lại.',
+                    'duyet_khoa',
+                    VIEWS_URL . '/khoa-hoc/chi-tiet.php?id=' . $id
+                );
+            }
             break;
         case 'cho_duyet':
             $kh->capNhatTrangThai($id, 'ban_nhap');
             $thong_bao = '<div class="alert alert-success">Đã chuyển sang chờ duyệt.</div>';
             $khoa_hoc['trang_thai'] = 'ban_nhap';
+            if ($khoa_hoc['id_nguoi_tao']) {
+                $thong_bao_model->guiThongBao(
+                    $khoa_hoc['id_nguoi_tao'],
+                    'Khóa học chuyển sang chờ duyệt',
+                    'Khóa học "' . $khoa_hoc['ten_khoa_hoc'] . '" đã được chuyển sang trạng thái chờ duyệt.',
+                    'tu_choi_khoa',
+                    VIEWS_URL . '/khoa-hoc/chi-tiet.php?id=' . $id
+                );
+            }
             break;
     }
 }

@@ -4,8 +4,16 @@ if (!isset($page_title)) {
 }
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../models/auth.php';
+require_once __DIR__ . '/../../models/thong_bao.php';
 $auth = new Auth();
 $nguoi_dung = $auth->layThongTinNguoiDung();
+$thong_bao_model = new ThongBao();
+$so_thong_bao_chua_doc = 0;
+$ds_thong_bao = [];
+if ($nguoi_dung) {
+    $so_thong_bao_chua_doc = $thong_bao_model->demChuaDoc($nguoi_dung['id']);
+    $ds_thong_bao = $thong_bao_model->layChuaDoc($nguoi_dung['id']);
+}
 
 // Active nav helper
 $current_script = basename($_SERVER['SCRIPT_NAME']);
@@ -345,6 +353,124 @@ function isActive($pattern, $path = null) {
             .hero-section h1 { font-size: 1.7rem; }
             .hero-section { padding: 48px 0 40px; }
         }
+
+        /* ── Notifications ── */
+        .badge-notification {
+            position: absolute;
+            top: -4px;
+            right: -6px;
+            background: #EF4444;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            border: 2px solid var(--secondary);
+        }
+        .notification-dropdown {
+            width: 360px !important;
+            max-height: 480px;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--light);
+        }
+        .notification-header h6 {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        .mark-all-read {
+            font-size: 0.78rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .mark-all-read:hover { text-decoration: underline; }
+        .notification-list {
+            max-height: 360px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+        .notification-item:hover { background: var(--light); }
+        .notification-item.unread { background: #EEF2FF; }
+        .notification-item.unread:hover { background: #E0E7FF; }
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .notification-content { flex: 1; min-width: 0; }
+        .notification-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+        .notification-text {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .notification-time {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+        .notification-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--muted);
+        }
+        .notification-empty i {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+        .notification-empty p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        .notification-footer {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            border-top: 1px solid var(--border);
+            background: var(--light);
+        }
+        .notification-footer:hover {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        @media (max-width: 768px) {
+            .notification-dropdown { width: 300px !important; }
+        }
     </style>
 </head>
 <body>
@@ -376,6 +502,50 @@ function isActive($pattern, $path = null) {
                 </li>
 
                 <?php if ($nguoi_dung): ?>
+                    <!-- Notification Bell -->
+                    <li class="nav-item dropdown" id="notificationDropdown">
+                        <a class="nav-link position-relative" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="notificationBell">
+                            <i class="fas fa-bell"></i>
+                            <?php if ($so_thong_bao_chua_doc > 0): ?>
+                                <span class="position-absolute badge-notification" id="notificationBadge"><?php echo $so_thong_bao_chua_doc > 9 ? '9+' : $so_thong_bao_chua_doc; ?></span>
+                            <?php endif; ?>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end notification-dropdown" id="notificationMenu">
+                            <div class="notification-header">
+                                <h6 class="mb-0">Thông báo</h6>
+                                <?php if ($so_thong_bao_chua_doc > 0): ?>
+                                    <a href="#" class="mark-all-read" id="markAllRead">Đánh dấu tất cả đã đọc</a>
+                                <?php endif; ?>
+                            </div>
+                            <div class="notification-list" id="notificationList">
+                                <?php if (empty($ds_thong_bao)): ?>
+                                    <div class="notification-empty">
+                                        <i class="fas fa-bell-slash"></i>
+                                        <p>Không có thông báo nào</p>
+                                    </div>
+                                <?php else: ?>
+                                    <?php foreach ($ds_thong_bao as $tb): ?>
+                                        <a href="<?php echo $tb['duong_dan'] ? $tb['duong_dan'] : '#'; ?>" 
+                                           class="notification-item <?php echo $tb['da_doc'] ? '' : 'unread'; ?>"
+                                           data-id="<?php echo $tb['id']; ?>">
+                                            <div class="notification-icon" style="background: <?php echo $thong_bao_model->getMauByLoai($tb['loai']); ?>20;">
+                                                <i class="fas <?php echo $thong_bao_model->getIconByLoai($tb['loai']); ?>"></i>
+                                            </div>
+                                            <div class="notification-content">
+                                                <p class="notification-title"><?php echo htmlspecialchars($tb['tieu_de']); ?></p>
+                                                <p class="notification-text"><?php echo htmlspecialchars($tb['noi_dung'] ?? ''); ?></p>
+                                                <span class="notification-time"><?php echo $thong_bao_model->getTimeAgo($tb['ngay_tao']); ?></span>
+                                            </div>
+                                        </a>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                            <a href="<?php echo VIEWS_URL; ?>/thong-bao/index.php" class="notification-footer">
+                                Xem tất cả thông báo
+                            </a>
+                        </div>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link <?php echo isActive('/home/index.php'); ?>"
                            href="<?php echo VIEWS_URL; ?>/home/index.php">

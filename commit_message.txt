@@ -1,0 +1,18 @@
+feat(notification): them he thong thong bao cho nguoi dung
+
+Them bang thong_bao vao database schema de luu tru cac thong bao
+he thong. Tao model ThongBao voi cac phuong thuc: gui thong bao,
+lay danh sach, danh dau da doc, xoa, dem thong bao chua doc.
+
+Tich hop notification bell vao header voi dropdown hien thi
+thong bao chua doc. Ho tro cac loai thong bao: duyet khoa hoc,
+tu choi khoa hoc, hoan thanh khoa hoc, chung chi, dang ky,
+bai kiem tra.
+
+Tao trang xem tat ca thong bao tai /views/thong-bao/index.php
+voi bo loc theo loai va nut xoa. Tao API /api/thong-bao.php
+xu ly cac thao tac: mark_read, mark_all_read, delete.
+
+Tich hop gui thong bao tu dong khi: admin duyet/tu choi/hien
+thi lai khoa hoc, admin xac nhan/huy dang ky hoc vien,
+hoc vien hoan thanh khoa hoc nhan chung chi.

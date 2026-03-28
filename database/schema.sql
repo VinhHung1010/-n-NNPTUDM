@@ -154,6 +154,22 @@ CREATE TABLE IF NOT EXISTS yeu_thich (
     UNIQUE KEY unique_favorite (id_nguoi_dung, id_khoa_hoc)
 ) ENGINE=InnoDB;
 
+-- Bảng thông báo
+CREATE TABLE IF NOT EXISTS thong_bao (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_nguoi_nhan INT NOT NULL,
+    tieu_de VARCHAR(255) NOT NULL,
+    noi_dung TEXT,
+    loai ENUM('dang_ky', 'duyet_khoa', 'tu_choi_khoa', 'hoan_thanh_khoa', 'chung_chi', 'quiz', 'he_thong') DEFAULT 'he_thong',
+    duong_dan VARCHAR(255) DEFAULT NULL,
+    da_doc BOOLEAN DEFAULT FALSE,
+    ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_nguoi_nhan) REFERENCES nguoi_dung(id) ON DELETE CASCADE,
+    INDEX idx_nguoi_nhan (id_nguoi_nhan),
+    INDEX idx_da_doc (da_doc),
+    INDEX idx_ngay_tao (ngay_tao DESC)
+) ENGINE=InnoDB;
+
 -- Dữ liệu mẫu: Danh mục
 INSERT INTO danh_muc (ten_danh_muc, mo_ta) VALUES
 ('Lập trình Web', 'Các khóa học về lập trình web'),

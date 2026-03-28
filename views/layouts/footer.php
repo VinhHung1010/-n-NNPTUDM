@@ -81,5 +81,66 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Notification AJAX handlers
+document.addEventListener('DOMContentLoaded', function() {
+    // Mark single notification as read
+    document.querySelectorAll('.notification-item').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            const notifId = this.dataset.id;
+            if (notifId && !this.classList.contains('read')) {
+                fetch('<?php echo SITE_URL; ?>/api/thong-bao.php?action=mark_read&id=' + notifId)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateNotificationBadge(-1);
+                            this.classList.remove('unread');
+                        }
+                    })
+                    .catch(console.error);
+            }
+        });
+    });
+
+    // Mark all as read
+    const markAllBtn = document.getElementById('markAllRead');
+    if (markAllBtn) {
+        markAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            fetch('<?php echo SITE_URL; ?>/api/thong-bao.php?action=mark_all_read')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelectorAll('.notification-item.unread').forEach(item => {
+                            item.classList.remove('unread');
+                        });
+                        updateNotificationBadge(0);
+                        const badge = document.getElementById('notificationBadge');
+                        if (badge) badge.remove();
+                        markAllBtn.remove();
+                    }
+                })
+                .catch(console.error);
+        });
+    }
+
+    function updateNotificationBadge(change) {
+        const badge = document.getElementById('notificationBadge');
+        if (badge) {
+            let count = parseInt(badge.textContent);
+            if (change === 0) {
+                badge.remove();
+            } else {
+                count += change;
+                if (count <= 0) {
+                    badge.remove();
+                } else {
+                    badge.textContent = count > 9 ? '9+' : count;
+                }
+            }
+        }
+    }
+});
+</script>
 </body>
 </html>
